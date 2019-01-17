@@ -1,0 +1,21 @@
+@import uk.gov.hmrc.agentauthorisation.controllers.ApiAccess
+@import play.api.libs.json.Json
+
+@(access: ApiAccess)
+{
+  "scopes":[],
+  "api": {
+    "name": "Agent Authorisation Test Support",
+    "description": "The Agent Authorisation Test Support API prepares Client's data in the stub and returns a knownFact required when creating agent authorisation request using POST /agents/:arn/invitations.",
+    "context": "agent-authorisation-test-support",
+    "isTestSupport": true,
+    "versions": [
+      {
+        "version": "1.0",
+        "status": "ALPHA",
+        "endpointsEnabled": true,
+        "access": @Json.toJson(access)
+      }
+    ]
+  }
+}

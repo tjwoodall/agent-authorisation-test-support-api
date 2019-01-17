@@ -1,3 +1,4 @@
-# microservice specific routes
 
-GET        /hello-world             uk.gov.hmrc.agentauthorisationtestsupportapi.controllers.MicroserviceHelloWorld.hello
+# known facts
+GET /agent-authorisation-test-support/known-facts/mtd-it/nino/:nino   @uk.gov.hmrc.agentauthorisation.controllers.KnownFactController.prepareMtdItKnownFact(nino: uk.gov.hmrc.domain.Nino)
+GET /agent-authorisation-test-support/known-facts/mtd-vat/vrn/:vrn   @uk.gov.hmrc.agentauthorisation.controllers.KnownFactController.prepareMtdVatKnownFact(vrn: uk.gov.hmrc.agentmtdidentifiers.model.Vrn)

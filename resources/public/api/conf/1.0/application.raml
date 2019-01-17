@@ -1,0 +1,57 @@
+#%RAML 1.0
+title: Agent Authorisation Test Support
+version: 1.0
+protocols: [ HTTPS ]
+baseUri: https://api.service.hmrc.gov.uk/
+mediaType: [ application/json, application/hal+json ]
+description: The Agent Authorisation Test Support API prepares Client's data in the stub and returns a knownFact required when creating agent authorisation request using POST /agents/:arn/invitations.
+
+documentation:
+ - title: Overview
+   content: !include docs/overview.md
+
+uses:
+  sec: https://developer.service.hmrc.gov.uk/api-documentation/assets/common/modules/securitySchemes.raml
+  headers: https://developer.service.hmrc.gov.uk/api-documentation/assets/common/modules/headers.raml
+  annotations: https://developer.service.hmrc.gov.uk/api-documentation/assets/common/modules/annotations.raml
+  types: https://developer.service.hmrc.gov.uk/api-documentation/assets/common/modules/types.raml
+
+/agent-authorisation-test-support:
+  /known-facts:
+    /mtd-vat/vrn/{vrn}:
+      is: [headers.acceptHeader]
+      uriParameters:
+        vrn:
+          description: VAT Registration Number
+          type: string
+          example: "101747696"
+      get:
+        displayName: Prepare data in the stub and return VAT Registration Date
+
+        responses:
+          200:
+            body:
+              application/json:
+                description: Returns VAT Registration Date matching client's VRN for the purpose of MTD-VAT agent authorisation request
+                type: !include schemas/known-facts.schema.json
+                examples:
+                  pending and responded: !include examples/known-fact-mtd-vat.json
+
+    /mtd-it/nino/{nino}:
+          is: [headers.acceptHeader]
+          uriParameters:
+            nino:
+              description: National Insurance Number
+              type: string
+              example: AA999999A
+          get:
+            displayName: Prepare data in the stub and return business postcode
+
+            responses:
+              200:
+                body:
+                  application/json:
+                    description: Returns business postcode matching client's NINO for the purpose of MTD-IT agent authorisation request
+                    type: !include schemas/known-facts.schema.json
+                    examples:
+                      pending and responded: !include examples/known-fact-mtd-it.json
