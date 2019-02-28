@@ -16,10 +16,44 @@ uses:
   annotations: https://developer.service.hmrc.gov.uk/api-documentation/assets/common/modules/annotations.raml
   types: https://developer.service.hmrc.gov.uk/api-documentation/assets/common/modules/types.raml
 
+traits:
+  headerErrors:
+      responses:
+        400:
+          body:
+            application/json:
+              type: types.errorResponse
+              examples:
+                badRequestUnsupportedVersion:
+                    description: Missing or unsupported version found in 'Accept' header.
+                    value:
+                      code: BAD_REQUEST
+                      message: Missing or unsupported version number
+                badRequestUnsupportedContentType:
+                    description: Missing or unsupported found in 'Accept' header.
+                    value:
+                      code: BAD_REQUEST
+                      message: Missing or unsupported content-type.
+        406:
+          body:
+            application/json:
+              type: types.errorResponse
+              examples:
+                acceptHeaderMissing:
+                  description: Missing 'Accept' header.
+                  value:
+                    code: ACCEPT_HEADER_INVALID
+                    message: Missing 'Accept' header.
+                acceptHeaderInvalid:
+                    description: Invalid 'Accept' header.
+                    value:
+                      code: ACCEPT_HEADER_INVALID
+                      message: Invalid 'Accept' header
+
 /agent-authorisation-test-support:
   /known-facts:
     /mtd-vat/vrn/{vrn}:
-      is: [headers.acceptHeader]
+      is: [headers.acceptHeader, headerErrors]
       uriParameters:
         vrn:
           description: VAT Registration Number
@@ -38,7 +72,7 @@ uses:
                   pending and responded: !include examples/known-fact-mtd-vat.json
 
     /mtd-it/nino/{nino}:
-          is: [headers.acceptHeader]
+          is: [headers.acceptHeader, headerErrors]
           uriParameters:
             nino:
               description: National Insurance Number

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.ws.WSClient
 import uk.gov.hmrc.agentauthorisation.stubs.DataStreamStubs
 import uk.gov.hmrc.agentauthorisation.support.{Resource, WireMockSupport}
-import uk.gov.hmrc.http.HttpResponse
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.test.UnitSpec
 
 import scala.language.postfixOps
@@ -31,6 +31,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
 class ApiPlatformISpec extends UnitSpec with OneServerPerSuite with WireMockSupport with DataStreamStubs {
 
   override implicit lazy val app: Application = appBuilder.build()
+
+  implicit val hc: HeaderCarrier = HeaderCarrier(otherHeaders = Seq("Accept" -> s"application/vnd.hmrc.1.0+json"))
 
   protected def appBuilder: GuiceApplicationBuilder =
     new GuiceApplicationBuilder()

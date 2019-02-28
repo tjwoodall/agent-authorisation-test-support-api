@@ -16,7 +16,7 @@
 
 import java.net.URL
 
-import com.google.inject.AbstractModule
+import com.google.inject.{AbstractModule, TypeLiteral}
 import com.google.inject.name.Names
 import javax.inject.Provider
 import org.slf4j.MDC
@@ -53,6 +53,8 @@ class MicroserviceModule(val environment: Environment, val configuration: Config
 
     bind(classOf[ServiceLocatorConnector])
       .to(classOf[ApiServiceLocatorConnector])
+
+    bindSeqStringProperty("api.supported-versions")
 
     bind(classOf[ApplicationRegistration]).asEagerSingleton()
 
@@ -117,6 +119,18 @@ class MicroserviceModule(val environment: Environment, val configuration: Config
     override lazy val get: Int = configuration
       .getInt(confKey)
       .getOrElse(throw new IllegalStateException(s"No value found for configuration property $confKey"))
+  }
+
+  private def bindSeqStringProperty(propertyName: String) =
+    bind(new TypeLiteral[Seq[String]]() {})
+      .annotatedWith(Names.named(propertyName))
+      .toProvider(new SeqStringPropertyProvider(propertyName))
+
+  private class SeqStringPropertyProvider(confKey: String) extends Provider[Seq[String]] {
+    override lazy val get: Seq[String] = configuration
+      .getStringSeq(confKey)
+      .getOrElse(throw new IllegalStateException(s"No value found for configuration property $confKey"))
+
   }
 
 }
