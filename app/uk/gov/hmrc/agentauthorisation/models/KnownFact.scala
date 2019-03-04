@@ -15,22 +15,13 @@
  */
 
 package uk.gov.hmrc.agentauthorisation.models
-import org.joda.time.LocalDate
-import play.api.libs.json.{JsObject, Reads, __}
+import play.api.libs.json.{Format, Json}
 
-case class VatCustomerInfo(effectiveRegistrationDate: Option[LocalDate])
+case class KnownFact(key: String, value: String) {
+  override def toString: String = s"${key.toUpperCase}~$value"
+}
 
-object VatCustomerInfo {
-  implicit val vatCustomerInfoReads: Reads[VatCustomerInfo] = {
-    (__ \ "approvedInformation").readNullable[JsObject].map {
-      case Some(approvedInformation) =>
-        val maybeDate =
-          (approvedInformation \ "customerDetails" \ "effectiveRegistrationDate")
-            .asOpt[String]
-            .map(LocalDate.parse)
-        VatCustomerInfo(maybeDate)
-      case None =>
-        VatCustomerInfo(None)
-    }
-  }
+object KnownFact {
+  implicit val formats: Format[KnownFact] = Json.format[KnownFact]
+  implicit val ordering: Ordering[KnownFact] = Ordering.by(_.key)
 }
