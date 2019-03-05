@@ -1,1 +1,3 @@
-The Agent Authorisation Test Support API prepares Client's data in the stub and returns a knownFact required when creating agent authorisation request using POST /agents/:arn/invitations.
+The Agent Authorisation Test Support API provides test-only ability to accept or reject an authorisation request created with Agent Authorisation API. 
+In normal circumstances this had to be done by the individual or organisation going through dedicated acceptance UI. 
+For the purpose of external test environment we provide two open test endpoints which concludes the authorisation request with the same effects as UI journey.
