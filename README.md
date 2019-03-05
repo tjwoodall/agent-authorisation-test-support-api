@@ -167,7 +167,7 @@ Returns business postcode matching client's NINO for the purpose of MTD-IT agent
 
 ---
 
-### /agent-authorisation-test-support/known-facts/invitations/:id
+### /agent-authorisation-test-support/invitations/:id
 
 #### **PUT**:
 
