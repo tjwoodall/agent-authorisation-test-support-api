@@ -4,7 +4,6 @@
 The Agent Authorisation Test Support API provides test-only ability to accept or reject an authorisation request created with Agent Authorisation API. 
 In normal circumstances this had to be done by the individual or organisation going through dedicated acceptance UI. 
 For the purpose of external test environment we provide two open test endpoints which concludes the authorisation request with the same effects as UI journey.
-
 ---
 
 ## /agent-authorisation-test-support
