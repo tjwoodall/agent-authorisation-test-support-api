@@ -6,7 +6,7 @@
   "scopes":[],
   "api": {
     "name": "Agent Authorisation Test Support",
-    "description": "The Agent Authorisation Test Support API prepares Client's data in the stub and returns a knownFact required when creating agent authorisation request using POST /agents/:arn/invitations.",
+    "description": "The Agent Authorisation Test Support API provides test-only ability to accept or reject an authorisation request created with Agent Authorisation API POST /agents/:arn/invitations.",
     "context": "agent-authorisation-test-support",
     "isTestSupport": true,
     "versions": [
