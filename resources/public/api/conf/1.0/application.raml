@@ -4,7 +4,7 @@ version: 1.0
 protocols: [ HTTPS ]
 baseUri: https://api.service.hmrc.gov.uk/
 mediaType: [ application/json, application/hal+json ]
-description: The Agent Authorisation Test Support API prepares Client's data in the stub and returns a knownFact required when creating agent authorisation request using POST /agents/:arn/invitations.
+description: The Agent Authorisation Test Support API provides test-only ability to accept or reject an authorisation request created with Agent Authorisation API.
 
 documentation:
  - title: Overview
@@ -52,7 +52,7 @@ traits:
 
 /agent-authorisation-test-support:
   /invitations:
-    /:id:
+    /{id}:
         is: [headers.acceptHeader, headerErrors]
 
         put:
