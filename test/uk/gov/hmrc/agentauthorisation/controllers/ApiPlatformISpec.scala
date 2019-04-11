@@ -60,6 +60,7 @@ class ApiPlatformISpec extends UnitSpec with OneServerPerSuite with WireMockSupp
       val definition = response.json
 
       (definition \ "api" \ "name").as[String] shouldBe "Agent Authorisation Test Support"
+      (definition \ "api" \ "categories").as[Seq[String]] should contain("AGENTS")
 
       val accessConfig = definition \ "api" \ "versions" \\ "access"
       (accessConfig.head \ "type").as[String] shouldBe "PRIVATE"
