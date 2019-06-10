@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.agentauthorisation.models
 
-import org.joda.time.LocalDate
+import java.time.LocalDate
 import play.api.libs.json.{Format, Json}
 import uk.gov.hmrc.domain.Nino
 
