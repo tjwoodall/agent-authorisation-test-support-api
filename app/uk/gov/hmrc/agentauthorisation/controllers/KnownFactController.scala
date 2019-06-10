@@ -16,6 +16,8 @@
 
 package uk.gov.hmrc.agentauthorisation.controllers
 
+import java.time.format.DateTimeFormatter
+
 import com.google.inject.Provider
 import javax.inject.{Inject, Singleton}
 import play.api.libs.json.{Format, Json}
@@ -37,6 +39,8 @@ class KnownFactController @Inject()(stubsConnector: AgentsExternalStubsConnector
 
   import KnownFactController._
 
+  private val dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+
   def prepareMtdVatKnownFact(vrn: Vrn): Action[AnyContent] = Action.async { implicit request =>
     val user =
       User(
@@ -54,7 +58,7 @@ class KnownFactController @Inject()(stubsConnector: AgentsExternalStubsConnector
     } yield
       vatCustomerInformation.flatMap(_.effectiveRegistrationDate) match {
         case Some(date) =>
-          Ok(Json.toJson(KnownFactResponse(Seq("MTD-VAT"), "business", "vrn", vrn.value, date.toString("yyyy-MM-dd"))))
+          Ok(Json.toJson(KnownFactResponse(Seq("MTD-VAT"), "business", "vrn", vrn.value, date.format(dateFormat))))
         case None =>
           InternalServerError("Missing VAT Registration Date verifier")
       }

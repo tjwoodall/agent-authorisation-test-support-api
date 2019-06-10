@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.agentauthorisation.connectors
 
-import org.joda.time.LocalDate
+import java.time.LocalDate
 import uk.gov.hmrc.agentauthorisation.models.Invitation
 import uk.gov.hmrc.agentauthorisation.stubs.{ACAStubs, TestIdentifiers}
 import uk.gov.hmrc.agentauthorisation.support.BaseISpec

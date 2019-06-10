@@ -21,7 +21,9 @@ import java.net.URL
 import com.codahale.metrics.MetricRegistry
 import com.kenshoo.play.metrics.Metrics
 import javax.inject.{Inject, Named, Singleton}
-import org.joda.time.LocalDate
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+
 import org.joda.time.format.ISODateTimeFormat
 import uk.gov.hmrc.agent.kenshoo.monitoring.HttpAPIMonitor
 import uk.gov.hmrc.agentauthorisation.models.Invitation
@@ -39,7 +41,7 @@ class InvitationsConnector @Inject()(
     extends HttpAPIMonitor {
 
   override val kenshooRegistry: MetricRegistry = metrics.defaultRegistry
-  private val dateFormatter = ISODateTimeFormat.date()
+  private val dateFormatter = DateTimeFormatter.ISO_LOCAL_DATE
 
   def checkPostcodeForClient(nino: Nino, postcode: String)(
     implicit
@@ -65,11 +67,11 @@ class InvitationsConnector @Inject()(
     ec: ExecutionContext): Future[Option[Boolean]] =
     monitor(s"ConsumedAPI-CheckVatRegDate-GET") {
       http
-        .GET[HttpResponse](
-          new URL(
-            baseUrl,
-            s"/agent-client-authorisation/known-facts/organisations/vat/${vrn.value}/registration-date/${dateFormatter
-              .print(registrationDateKnownFact)}").toString)
+        .GET[HttpResponse](new URL(
+          baseUrl,
+          s"/agent-client-authorisation/known-facts/organisations/vat/${vrn.value}/registration-date/${dateFormatter
+            .format(registrationDateKnownFact)}"
+        ).toString)
         .map(_ => Some(true))
     }.recover {
       case ex: Upstream4xxResponse if ex.upstreamResponseCode == 403 =>

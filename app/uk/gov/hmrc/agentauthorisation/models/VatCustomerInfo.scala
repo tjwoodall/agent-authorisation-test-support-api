@@ -15,7 +15,7 @@
  */
 
 package uk.gov.hmrc.agentauthorisation.models
-import org.joda.time.LocalDate
+import java.time.LocalDate
 import play.api.libs.json.{JsObject, Reads, __}
 
 case class VatCustomerInfo(effectiveRegistrationDate: Option[LocalDate])

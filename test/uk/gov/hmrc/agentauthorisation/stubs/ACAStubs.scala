@@ -17,7 +17,7 @@
 package uk.gov.hmrc.agentauthorisation.stubs
 
 import com.github.tomakehurst.wiremock.client.WireMock._
-import org.joda.time.LocalDate
+import java.time.LocalDate
 import uk.gov.hmrc.agentauthorisation.UriPathEncoding.encodePathSegment
 import uk.gov.hmrc.agentauthorisation.support.WireMockSupport
 import uk.gov.hmrc.agentmtdidentifiers.model.{Arn, InvitationId, Vrn}
