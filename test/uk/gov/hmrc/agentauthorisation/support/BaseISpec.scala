@@ -37,9 +37,6 @@ abstract class BaseISpec extends UnitSpec with OneAppPerSuite with WireMockSuppo
         "microservice.services.agents-external-stubs.port"      -> wireMockPort,
         "microservice.services.agent-client-authorisation.host" -> wireMockHost,
         "microservice.services.agent-client-authorisation.port" -> wireMockPort,
-        "microservice.services.service-locator.port"            -> wireMockPort,
-        "microservice.services.service-locator.host"            -> wireMockHost,
-        "microservice.services.service-locator.enabled"         -> false,
         "passcodeAuthentication.enabled"                        -> true,
         "api.supported-versions"                                -> Seq("1.0")
       )

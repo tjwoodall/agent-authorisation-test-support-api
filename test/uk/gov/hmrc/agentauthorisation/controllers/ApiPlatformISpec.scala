@@ -41,10 +41,7 @@ class ApiPlatformISpec extends UnitSpec with OneServerPerSuite with WireMockSupp
         "auditing.consumer.baseUri.host"                   -> wireMockHost,
         "auditing.consumer.baseUri.port"                   -> wireMockPort,
         "microservice.services.agents-external-stubs.host" -> wireMockHost,
-        "microservice.services.agents-external-stubs.port" -> wireMockPort,
-        "microservice.services.service-locator.port"       -> wireMockPort,
-        "microservice.services.service-locator.host"       -> wireMockHost,
-        "microservice.services.service-locator.enabled"    -> false
+        "microservice.services.agents-external-stubs.port" -> wireMockPort
       )
 
   implicit val ws: WSClient = app.injector.instanceOf[WSClient]
