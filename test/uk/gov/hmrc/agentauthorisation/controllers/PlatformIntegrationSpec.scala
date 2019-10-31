@@ -26,10 +26,8 @@ import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerTest
 import play.api.http.Status.{NO_CONTENT, OK}
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.{Application, Mode}
-import uk.gov.hmrc.api.domain.Registration
 import uk.gov.hmrc.play.test.UnitSpec
 
 class PlatformIntegrationSpec
@@ -43,13 +41,12 @@ class PlatformIntegrationSpec
   override def newAppForTest(testData: TestData): Application =
     GuiceApplicationBuilder()
       .configure("run.mode" -> "Stub")
-      .configure(Map(
-        "appName"                                    -> "application-name",
-        "appUrl"                                     -> "http://example.com",
-        "auditing.enabled"                           -> false,
-        "microservice.services.service-locator.host" -> stubHost,
-        "microservice.services.service-locator.port" -> stubPort
-      ))
+      .configure(
+        Map(
+          "appName"          -> "application-name",
+          "appUrl"           -> "http://example.com",
+          "auditing.enabled" -> false
+        ))
       .in(Mode.Test)
       .build()
 
@@ -71,20 +68,6 @@ class PlatformIntegrationSpec
   }
 
   "microservice" should {
-
-    "register itself to service-locator" in new Setup {
-      def regPayloadStringFor(serviceName: String, serviceUrl: String): String =
-        Json
-          .toJson(Registration(serviceName, serviceUrl, Some(Map("third-party-api" -> "true"))))
-          .toString
-
-      verify(
-        1,
-        postRequestedFor(urlMatching("/registration"))
-          .withHeader("content-type", equalTo("application/json"))
-          .withRequestBody(equalTo(regPayloadStringFor("application-name", "http://example.com")))
-      )
-    }
 
     "provide definition endpoint and documentation endpoint for each api" in new Setup {
       def normalizeEndpointName(endpointName: String): String =

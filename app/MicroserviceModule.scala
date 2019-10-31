@@ -21,7 +21,6 @@ import com.google.inject.name.Names
 import javax.inject.Provider
 import org.slf4j.MDC
 import play.api.{Configuration, Environment, Logger}
-import uk.gov.hmrc.agentauthorisation.ApplicationRegistration
 import uk.gov.hmrc.api.connector.{ApiServiceLocatorConnector, ServiceLocatorConnector}
 import uk.gov.hmrc.http._
 import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
@@ -45,7 +44,6 @@ class MicroserviceModule(val environment: Environment, val configuration: Config
     bindProperty("appName")
     bindBaseUrl("agents-external-stubs")
     bindBaseUrl("agent-client-authorisation")
-    bindServiceBooleanProperty("service-locator.enabled")
 
     bind(classOf[CorePost]).to(classOf[DefaultHttpClient])
     bind(classOf[HttpGet]).to(classOf[DefaultHttpClient])
@@ -56,9 +54,6 @@ class MicroserviceModule(val environment: Environment, val configuration: Config
       .to(classOf[ApiServiceLocatorConnector])
 
     bindSeqStringProperty("api.supported-versions")
-
-    bind(classOf[ApplicationRegistration]).asEagerSingleton()
-
   }
 
   private def bindServiceProperty(propertyName: String) =
