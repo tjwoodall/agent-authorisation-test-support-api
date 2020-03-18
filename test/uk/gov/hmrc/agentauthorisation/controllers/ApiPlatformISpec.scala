@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,9 +60,7 @@ class ApiPlatformISpec extends UnitSpec with OneServerPerSuite with WireMockSupp
       (definition \ "api" \ "categories").as[Seq[String]] should contain("AGENTS")
 
       val accessConfig = definition \ "api" \ "versions" \\ "access"
-      (accessConfig.head \ "type").as[String] shouldBe "PRIVATE"
-      (accessConfig.head \ "whitelistedApplicationIds").head.as[String] shouldBe "00010002-0003-0004-0005-000600070008"
-      (accessConfig.head \ "whitelistedApplicationIds")(1).as[String] shouldBe "00090002-0003-0004-0005-000600070008"
+      (accessConfig.head \ "type").as[String] shouldBe "PUBLIC"
     }
   }
 

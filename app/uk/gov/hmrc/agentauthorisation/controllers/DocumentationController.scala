@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,10 +35,8 @@ class DocumentationController @Inject()(errorHandler: HttpErrorHandler, configur
 
   private lazy val apiAccess = {
     val accessConfig = configuration.getConfig("api.access")
-    val accessType = accessConfig.get.getString("type").getOrElse("PRIVATE")
-    val whiteList = accessConfig.get
-      .getStringSeq("white-list.applicationIds")
-      .getOrElse(Seq())
+    val accessType = accessConfig.get.getString("type").getOrElse("PUBLIC")
+    val whiteList = Seq.empty
     ApiAccess(accessType, whiteList)
   }
 
