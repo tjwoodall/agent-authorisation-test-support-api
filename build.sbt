@@ -17,27 +17,22 @@ lazy val scoverageSettings = {
 
 lazy val compileDeps = Seq(
   ws,
-  "uk.gov.hmrc" %% "bootstrap-play-25" % "4.11.0",
-  "uk.gov.hmrc" %% "auth-client" % "2.6.0",
-  "uk.gov.hmrc" %% "agent-mtd-identifiers" % "0.15.0-play-25",
-  "uk.gov.hmrc" %% "agent-kenshoo-monitoring" % "3.8.0",
-  "uk.gov.hmrc" %% "play-reactivemongo" % "6.7.0",
-  "uk.gov.hmrc" %% "play-whitelist-filter" % "2.0.0",
-  "uk.gov.hmrc" %% "play-config" % "7.5.0",
-  "uk.gov.hmrc" %% "play-hal" % "1.7.0",
-  "uk.gov.hmrc" %% "play-hmrc-api" % "3.2.0",
-  "de.threedimensions" %% "metrics-play" % "2.5.13",
-  "com.github.blemale" %% "scaffeine" % "2.6.0",
+  "uk.gov.hmrc" %% "bootstrap-backend-play-27" % "5.9.0",
+  "uk.gov.hmrc" %% "agent-mtd-identifiers" % "0.25.0-play-27",
+  "uk.gov.hmrc" %% "agent-kenshoo-monitoring" % "4.8.0-play-27",
+  "uk.gov.hmrc" %% "simple-reactivemongo" % "8.0.0-play-27",
+  "uk.gov.hmrc" %% "play-hal" % "3.1.0-play-27",
+  "uk.gov.hmrc" %% "play-hmrc-api" % "6.4.0-play-27",
+  "com.github.blemale" %% "scaffeine" % "3.1.0",
   ws
 )
 
 def testDeps(scope: String) = Seq(
-  "uk.gov.hmrc" %% "hmrctest" % "3.3.0" % scope,
-  "org.scalatest" %% "scalatest" % "3.0.7" % scope,
-  "org.mockito" % "mockito-core" % "2.27.0" % scope,
-  "org.scalatestplus.play" %% "scalatestplus-play" % "2.0.1" % scope,
-  "uk.gov.hmrc" %% "reactivemongo-test" % "3.1.0" % scope,
-  "com.github.tomakehurst" % "wiremock" % "2.23.2" % scope,
+  "org.mockito" % "mockito-core" % "3.2.0" % scope,
+  "org.scalatestplus.play" %% "scalatestplus-play" % "4.0.3" % scope,
+  "uk.gov.hmrc" %% "bootstrap-test-play-27" % "5.9.0" % scope,
+  "uk.gov.hmrc" %% "reactivemongo-test" % "5.0.0-play-27" % scope,
+  "com.github.tomakehurst" % "wiremock-jre8" % "2.26.1" % scope,
   "org.pegdown" % "pegdown" % "1.6.0" % scope,
   "com.typesafe.play" %% "play-test" % PlayVersion.current % scope
 )
@@ -46,14 +41,15 @@ lazy val root = (project in file("."))
   .settings(
     name := "agent-authorisation-test-support-api",
     organization := "uk.gov.hmrc",
-    scalaVersion := "2.11.11",
+    scalaVersion := "2.12.12",
     PlayKeys.playDefaultPort := 9443,
     resolvers := Seq(
-      Resolver.bintrayRepo("hmrc", "releases"),
-      Resolver.bintrayRepo("hmrc", "release-candidates"),
       Resolver.typesafeRepo("releases"),
       Resolver.jcenterRepo
     ),
+    resolvers += "HMRC-open-artefacts-maven" at "https://open.artefacts.tax.service.gov.uk/maven2",
+    resolvers += "HMRC-local-artefacts-maven" at "https://artefacts.tax.service.gov.uk/artifactory/hmrc-releases-local",
+    resolvers += Resolver.url("HMRC-open-artefacts-ivy", url("https://open.artefacts.tax.service.gov.uk/ivy2"))(Resolver.ivyStylePatterns),
     libraryDependencies ++= compileDeps ++ testDeps("test") ++ testDeps("it"),
     routesImport += "uk.gov.hmrc.agentauthorisation.binders.UrlBinders._",
     publishingSettings,
@@ -78,6 +74,6 @@ inConfig(IntegrationTest)(scalafmtCoreSettings)
 
 def oneForkedJvmPerTest(tests: Seq[TestDefinition]) = {
   tests.map { test =>
-    new Group(test.name, Seq(test), SubProcess(ForkOptions(runJVMOptions = Seq(s"-Dtest.name=${test.name}"))))
+    new Group(test.name, Seq(test), SubProcess(ForkOptions().withRunJVMOptions(Vector(s"-Dtest.name=${test.name}"))))
   }
 }

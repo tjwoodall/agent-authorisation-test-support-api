@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package uk.gov.hmrc.agentauthorisation
 import play.api.mvc.Results._
 import play.api.mvc.{Call, RequestHeader, Result}
 import play.api.test.FakeRequest
+import play.api.test.Helpers._
 import uk.gov.hmrc.agentauthorisation.support.BaseSpec
 
 import scala.concurrent.Future
@@ -26,7 +27,7 @@ import scala.concurrent.Future
 class AcceptHeaderFilterSpec extends BaseSpec {
 
   case class TestAcceptHeaderFilter(supportedVersion: Seq[String]) extends AcceptHeaderFilter(supportedVersion) {
-    def response(f: RequestHeader => Future[Result])(rh: RequestHeader) = await(super.apply(f)(rh))
+    def response(f: RequestHeader => Future[Result])(rh: RequestHeader) = super.apply(f)(rh)
   }
 
   object TestAcceptHeaderFilter {
@@ -34,10 +35,10 @@ class AcceptHeaderFilterSpec extends BaseSpec {
     val testHeaderVersion: String => Seq[(String, String)] =
       (testVersion: String) => Seq("Accept" -> s"application/vnd.hmrc.$testVersion+json")
 
-    def fakeHeaders(headers: Seq[(String, String)]) = testRequest(FakeRequest().withHeaders(headers: _*))
+    def fakeHeaders(headers: Seq[(String, String)]) = FakeRequest().withHeaders(headers: _*)
 
     def fakeHeaders(call: Call, headers: Seq[(String, String)]) =
-      testRequest(FakeRequest(call).withHeaders(headers: _*))
+      FakeRequest(call).withHeaders(headers: _*)
 
     def toResult(result: Result) = (_: RequestHeader) => Future.successful(result)
   }
@@ -49,13 +50,13 @@ class AcceptHeaderFilterSpec extends BaseSpec {
       "no errors found in request" in {
         val supportedVersions: Seq[String] = Seq("1.0")
         val fakeTestHeader = fakeHeaders(testHeaderVersion("1.0"))
-        TestAcceptHeaderFilter(supportedVersions).response(toResult(Ok("")))(fakeTestHeader) shouldBe Ok("")
+        TestAcceptHeaderFilter(supportedVersions).response(toResult(Ok("")))(fakeTestHeader).futureValue shouldBe Ok("")
       }
 
       "uri is /ping/ping with no headers" in {
         val call = Call("GET", "/ping/ping")
         val fakeTestHeader = fakeHeaders(call, testHeaderVersion("1.0"))
-        TestAcceptHeaderFilter(Seq.empty).response(toResult(Ok("")))(fakeTestHeader) shouldBe Ok("")
+        TestAcceptHeaderFilter(Seq.empty).response(toResult(Ok("")))(fakeTestHeader).futureValue shouldBe Ok("")
       }
     }
 
@@ -64,28 +65,28 @@ class AcceptHeaderFilterSpec extends BaseSpec {
         val supportedVersions: Seq[String] = Seq("1.0")
         val fakeTestHeader = fakeHeaders(Seq.empty)
         val result = TestAcceptHeaderFilter(supportedVersions).response(toResult(Ok))(fakeTestHeader)
-        bodyOf(result) shouldBe """{"code":"ACCEPT_HEADER_INVALID","message":"Missing 'Accept' header."}"""
+        contentAsString(result) shouldBe """{"code":"ACCEPT_HEADER_INVALID","message":"Missing 'Accept' header."}"""
       }
 
       "request had an invalid Accept Header" in {
         val supportedVersions: Seq[String] = Seq("1.0")
         val fakeTestHeader = fakeHeaders(Seq("Accept" -> s"InvalidHeader"))
         val result = TestAcceptHeaderFilter(supportedVersions).response(toResult(Ok))(fakeTestHeader)
-        bodyOf(result) shouldBe """{"code":"ACCEPT_HEADER_INVALID","message":"Invalid 'Accept' header."}"""
+        contentAsString(result) shouldBe """{"code":"ACCEPT_HEADER_INVALID","message":"Invalid 'Accept' header."}"""
       }
 
       "request used an unsupported version" in {
         val supportedVersions: Seq[String] = Seq("1.0")
         val fakeTestHeader = fakeHeaders(testHeaderVersion("0.0"))
         val result = TestAcceptHeaderFilter(supportedVersions).response(toResult(Ok))(fakeTestHeader)
-        bodyOf(result) shouldBe """{"code":"BAD_REQUEST","message":"Missing or unsupported version number."}"""
+        contentAsString(result) shouldBe """{"code":"BAD_REQUEST","message":"Missing or unsupported version number."}"""
       }
 
       "request used an unsupported content-type" in {
         val supportedVersions: Seq[String] = Seq("1.0")
         val fakeTestHeader = fakeHeaders(Seq("Accept" -> s"application/vnd.hmrc.1.0+xml"))
         val result = TestAcceptHeaderFilter(supportedVersions).response(toResult(Ok))(fakeTestHeader)
-        bodyOf(result) shouldBe """{"code":"BAD_REQUEST","message":"Missing or unsupported content-type."}"""
+        contentAsString(result) shouldBe """{"code":"BAD_REQUEST","message":"Missing or unsupported content-type."}"""
       }
     }
   }

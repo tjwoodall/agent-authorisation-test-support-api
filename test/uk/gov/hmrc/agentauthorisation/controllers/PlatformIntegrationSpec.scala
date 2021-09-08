@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,24 +18,22 @@ package uk.gov.hmrc.agentauthorisation.controllers
 
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
-import com.github.tomakehurst.wiremock.client.WireMock._
+import com.github.tomakehurst.wiremock.client.WireMock.{status => _, _}
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration._
-import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.{BeforeAndAfterEach, TestData}
-import org.scalatestplus.mockito.MockitoSugar
+import org.scalatest._
 import org.scalatestplus.play.guice.GuiceOneAppPerTest
 import play.api.http.Status.{NO_CONTENT, OK}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.{Application, Mode}
-import uk.gov.hmrc.play.test.UnitSpec
+import play.api.test.Helpers._
 
 class PlatformIntegrationSpec
-    extends UnitSpec with GuiceOneAppPerTest with MockitoSugar with ScalaFutures with BeforeAndAfterEach {
+    extends WordSpecLike with Matchers with OptionValues with GuiceOneAppPerTest with BeforeAndAfterEach {
 
   val stubHost = "localhost"
-  val stubPort =
-    sys.env.getOrElse("WIREMOCK_SERVICE_LOCATOR_PORT", "11112").toInt
+  val stubPort = 11112
+//    sys.env.getOrElse("WIREMOCK_SERVICE_LOCATOR_PORT", "11112").toInt
   val wireMockServer = new WireMockServer(wireMockConfig().port(stubPort))
 
   override def newAppForTest(testData: TestData): Application =
@@ -70,9 +68,6 @@ class PlatformIntegrationSpec
   "microservice" should {
 
     "provide definition endpoint and documentation endpoint for each api" in new Setup {
-      def normalizeEndpointName(endpointName: String): String =
-        endpointName.replaceAll(" ", "-")
-
       def verifyDocumentationPresent(version: String, endpointName: String) {
         withClue(s"Getting documentation version '$version' of endpoint '$endpointName'") {
           val documentationResult =
@@ -84,7 +79,7 @@ class PlatformIntegrationSpec
       val result = documentationController.definition()(request)
       status(result) shouldBe OK
 
-      val jsonResponse = jsonBodyOf(result).futureValue
+      val jsonResponse = contentAsJson(result)
 
       val versions: Seq[String] = (jsonResponse \\ "version") map (_.as[String])
       val endpointNames: Seq[Seq[String]] =
@@ -108,7 +103,7 @@ class PlatformIntegrationSpec
       val result = ramlController.raml("1.0", "application.raml")(request)
 
       status(result) shouldBe OK
-      bodyOf(result).futureValue should startWith("#%RAML 1.0")
+      contentAsString(result) should startWith("#%RAML 1.0")
     }
   }
 

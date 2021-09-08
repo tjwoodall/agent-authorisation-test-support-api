@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package uk.gov.hmrc.agentauthorisation.controllers
 
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, equalTo, get, post, stubFor, urlPathEqualTo}
 import play.api.test.FakeRequest
+import play.api.test.Helpers._
 import play.mvc.Http.HeaderNames
 import uk.gov.hmrc.agentauthorisation.support.BaseISpec
 import uk.gov.hmrc.agentmtdidentifiers.model.Vrn
@@ -42,10 +43,9 @@ class KnownFactControllerISpec extends BaseISpec {
       givenUserCreationInStubsSucceeds()
       givenVatCustomerInformationExists(vrn)
 
-      val result =
-        await(controller.prepareMtdVatKnownFact(Vrn(vrn))(fakeRequest))
+      val result = controller.prepareMtdVatKnownFact(Vrn(vrn))(fakeRequest)
       status(result) shouldBe 200
-      (jsonBodyOf(result) \ "knownFact").as[String] shouldBe "2017-11-09"
+      (contentAsJson(result) \ "knownFact").as[String] shouldBe "2017-11-09"
     }
 
     "return MTD-IT known fact" in {
@@ -55,11 +55,10 @@ class KnownFactControllerISpec extends BaseISpec {
       givenUserCreationInStubsSucceeds()
       givenBusinessDetailsExists(nino)
 
-      val result =
-        await(controller.prepareMtdItKnownFact(Nino(nino))(fakeRequest))
+      val result = controller.prepareMtdItKnownFact(Nino(nino))(fakeRequest)
       status(result) shouldBe 200
 
-      (jsonBodyOf(result) \ "knownFact").as[String] shouldBe "WV34 8JW"
+      (contentAsJson(result) \ "knownFact").as[String] shouldBe "WV34 8JW"
 
     }
 
@@ -70,11 +69,10 @@ class KnownFactControllerISpec extends BaseISpec {
       givenUserCreationInStubsReturnConflict()
       givenBusinessDetailsExists(nino)
 
-      val result =
-        await(controller.prepareMtdItKnownFact(Nino(nino))(fakeRequest))
+      val result = controller.prepareMtdItKnownFact(Nino(nino))(fakeRequest)
       status(result) shouldBe 200
 
-      (jsonBodyOf(result) \ "knownFact").as[String] shouldBe "WV34 8JW"
+      (contentAsJson(result) \ "knownFact").as[String] shouldBe "WV34 8JW"
 
     }
 
@@ -85,8 +83,7 @@ class KnownFactControllerISpec extends BaseISpec {
       givenUserCreationInStubsReturnConflict()
       givenVatCustomerInformationExists(vrn)
 
-      val result =
-        await(controller.prepareMtdVatKnownFact(Vrn(vrn))(fakeRequest))
+      val result = controller.prepareMtdVatKnownFact(Vrn(vrn))(fakeRequest)
       status(result) shouldBe 200
 
     }
@@ -98,8 +95,7 @@ class KnownFactControllerISpec extends BaseISpec {
       givenUserCreationInStubsSucceeds()
       givenVatCustomerInformationExistsNoKF(vrn)
 
-      val result =
-        await(controller.prepareMtdVatKnownFact(Vrn(vrn))(fakeRequest))
+      val result = controller.prepareMtdVatKnownFact(Vrn(vrn))(fakeRequest)
       status(result) shouldBe 500
     }
 
@@ -110,8 +106,7 @@ class KnownFactControllerISpec extends BaseISpec {
       givenUserCreationInStubsSucceeds()
       givenBusinessDetailsExistsNoKF(nino)
 
-      val result =
-        await(controller.prepareMtdItKnownFact(Nino(nino))(fakeRequest))
+      val result = controller.prepareMtdItKnownFact(Nino(nino))(fakeRequest)
       status(result) shouldBe 500
     }
   }

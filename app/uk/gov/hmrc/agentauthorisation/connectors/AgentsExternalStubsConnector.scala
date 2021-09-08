@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ import uk.gov.hmrc.agentauthorisation.models.{BusinessDetails, EnrolmentInfo, Us
 import uk.gov.hmrc.agentmtdidentifiers.model.Vrn
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http._
-import uk.gov.hmrc.http.logging.Authorization
+import uk.gov.hmrc.http.Authorization
 
 import scala.concurrent.{ExecutionContext, Future}
 @Singleton

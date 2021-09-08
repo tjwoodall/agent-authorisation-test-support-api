@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,21 +56,21 @@ class InvitationsConnectorISpec extends BaseISpec with ACAStubs with TestIdentif
   "checkPostcodeForClient" should {
     "return true when the nino and postcode do match" in {
       givenMatchingClientIdAndPostcode(validNino, validPostcode)
-      val result = await(connector.checkPostcodeForClient(validNino, validPostcode))
+      val result = connector.checkPostcodeForClient(validNino, validPostcode).futureValue
 
       result shouldBe Some(true)
     }
 
     "return false when the nino and postcode do not match" in {
       givenNonMatchingClientIdAndPostcode(validNino, validPostcode)
-      val result = await(connector.checkPostcodeForClient(validNino, validPostcode))
+      val result = connector.checkPostcodeForClient(validNino, validPostcode).futureValue
 
       result shouldBe Some(false)
     }
 
     "return None when the client registration is not found" in {
       givenNotEnrolledClientITSA(validNino, validPostcode)
-      val result = await(connector.checkPostcodeForClient(validNino, validPostcode))
+      val result = connector.checkPostcodeForClient(validNino, validPostcode).futureValue
 
       result shouldBe None
     }
@@ -79,21 +79,21 @@ class InvitationsConnectorISpec extends BaseISpec with ACAStubs with TestIdentif
   "checkVatRegDateForClient" should {
     "return true when the Vrn and VAT registration date do match" in {
       checkClientIdAndVatRegDate(validVrn, LocalDate.parse(validVatRegDate), 204)
-      val result = await(connector.checkVatRegDateForClient(validVrn, LocalDate.parse(validVatRegDate)))
+      val result = connector.checkVatRegDateForClient(validVrn, LocalDate.parse(validVatRegDate)).futureValue
 
       result shouldBe Some(true)
     }
 
     "return false when the Vrn and VAT registration date do not match" in {
       checkClientIdAndVatRegDate(validVrn, LocalDate.parse(validVatRegDate), 403)
-      val result = await(connector.checkVatRegDateForClient(validVrn, LocalDate.parse(validVatRegDate)))
+      val result = connector.checkVatRegDateForClient(validVrn, LocalDate.parse(validVatRegDate)).futureValue
 
       result shouldBe Some(false)
     }
 
     "return None when the client registration is not found" in {
       checkClientIdAndVatRegDate(validVrn, LocalDate.parse(validVatRegDate), 404)
-      val result = await(connector.checkVatRegDateForClient(validVrn, LocalDate.parse(validVatRegDate)))
+      val result = connector.checkVatRegDateForClient(validVrn, LocalDate.parse(validVatRegDate)).futureValue
 
       result shouldBe None
     }
@@ -102,21 +102,21 @@ class InvitationsConnectorISpec extends BaseISpec with ACAStubs with TestIdentif
   "getInvitation" should {
     "return an ITSA invitation" in {
       givenGetITSAInvitationStub(arn, "Pending")
-      val result = await(connector.getInvitation(invitationIdITSA))
+      val result = connector.getInvitation(invitationIdITSA).futureValue
 
       result.get shouldBe storedItsaInvitation
     }
 
     "return an VAT invitation" in {
       givenGetVATInvitationStub(arn, "Pending")
-      val result = await(connector.getInvitation(invitationIdVAT))
+      val result = connector.getInvitation(invitationIdVAT).futureValue
 
       result.get shouldBe storedVatInvitation
     }
 
     "return no invitation" in {
       givenInvitationNotFound(arn, invitationIdITSA)
-      val result = await(connector.getInvitation(invitationIdITSA))
+      val result = connector.getInvitation(invitationIdITSA).futureValue
 
       result shouldBe None
     }
@@ -125,28 +125,28 @@ class InvitationsConnectorISpec extends BaseISpec with ACAStubs with TestIdentif
   "acceptInvitation" should {
     "return 204 when cancellation is successful" in {
       givenAcceptInvitationStub(invitationIdITSA, mtdItId.value, "MTDITID", 204)
-      val result = await(connector.acceptInvitation(invitationIdITSA, mtdItId.value, "MTDITID"))
+      val result = connector.acceptInvitation(invitationIdITSA, mtdItId.value, "MTDITID").futureValue
 
       result shouldBe Some(204)
     }
 
     "return 404 when invitation is not found" in {
       givenAcceptInvitationStub(invitationIdITSA, mtdItId.value, "MTDITID", 404)
-      val result = await(connector.acceptInvitation(invitationIdITSA, mtdItId.value, "MTDITID"))
+      val result = connector.acceptInvitation(invitationIdITSA, mtdItId.value, "MTDITID").futureValue
 
       result shouldBe Some(404)
     }
 
     "return 403 when an invitation cannot be cancelled" in {
       givenAcceptInvitationStubInvalid(invitationIdITSA, mtdItId.value, "MTDITID")
-      val result = await(connector.acceptInvitation(invitationIdITSA, mtdItId.value, "MTDITID"))
+      val result = connector.acceptInvitation(invitationIdITSA, mtdItId.value, "MTDITID").futureValue
 
       result shouldBe Some(403)
     }
 
     "return None when some other response is returned" in {
       givenAcceptInvitationStub(invitationIdITSA, mtdItId.value, "MTDITID", 403)
-      val result = await(connector.acceptInvitation(invitationIdITSA, mtdItId.value, "MTDITID"))
+      val result = connector.acceptInvitation(invitationIdITSA, mtdItId.value, "MTDITID").futureValue
 
       result shouldBe Some(403)
     }
@@ -155,28 +155,28 @@ class InvitationsConnectorISpec extends BaseISpec with ACAStubs with TestIdentif
   "rejectInvitation" should {
     "return 204 when cancellation is successful" in {
       givenRejectInvitationStub(invitationIdITSA, mtdItId.value, "MTDITID", 204)
-      val result = await(connector.rejectInvitation(invitationIdITSA, mtdItId.value, "MTDITID"))
+      val result = connector.rejectInvitation(invitationIdITSA, mtdItId.value, "MTDITID").futureValue
 
       result shouldBe Some(204)
     }
 
     "return 404 when invitation is not found" in {
       givenRejectInvitationStub(invitationIdITSA, mtdItId.value, "MTDITID", 404)
-      val result = await(connector.rejectInvitation(invitationIdITSA, mtdItId.value, "MTDITID"))
+      val result = connector.rejectInvitation(invitationIdITSA, mtdItId.value, "MTDITID").futureValue
 
       result shouldBe Some(404)
     }
 
     "return 403 when an invitation cannot be cancelled" in {
       givenRejectInvitationStubInvalid(invitationIdITSA, mtdItId.value, "MTDITID")
-      val result = await(connector.rejectInvitation(invitationIdITSA, mtdItId.value, "MTDITID"))
+      val result = connector.rejectInvitation(invitationIdITSA, mtdItId.value, "MTDITID").futureValue
 
       result shouldBe Some(403)
     }
 
     "return None when some other response is returned" in {
       givenRejectInvitationStub(invitationIdITSA, mtdItId.value, "MTDITID", 403)
-      val result = await(connector.rejectInvitation(invitationIdITSA, mtdItId.value, "MTDITID"))
+      val result = connector.rejectInvitation(invitationIdITSA, mtdItId.value, "MTDITID").futureValue
 
       result shouldBe Some(403)
     }

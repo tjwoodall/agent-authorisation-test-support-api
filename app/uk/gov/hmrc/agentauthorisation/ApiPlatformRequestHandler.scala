@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ class ApiPlatformRequestHandler @Inject()(
     } else if (request.path.startsWith(api)) {
       super.handlerForRequest(request)
     } else if (!request.path.startsWith(context)) {
-      super.handlerForRequest(request.copy(path = context + request.path))
+      super.handlerForRequest(request.withTarget(request.target.withPath(context + request.path)))
     } else {
       super.handlerForRequest(request)
     }

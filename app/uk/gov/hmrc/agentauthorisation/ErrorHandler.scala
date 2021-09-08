@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,16 +21,16 @@ import play.api.Configuration
 import play.api.http.Status._
 import play.api.mvc._
 import uk.gov.hmrc.agentauthorisation.controllers.ErrorResponse._
+import uk.gov.hmrc.play.bootstrap.config.HttpAuditEvent
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
-import uk.gov.hmrc.play.bootstrap.http.JsonErrorHandler
-
+import uk.gov.hmrc.play.bootstrap.backend.http.JsonErrorHandler
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ErrorHandler @Inject()(auditConnector: AuditConnector)(
+class ErrorHandler @Inject()(auditConnector: AuditConnector, httpAuditEvent: HttpAuditEvent)(
   implicit ec: ExecutionContext,
   configuration: Configuration)
-    extends JsonErrorHandler(configuration, auditConnector) {
+    extends JsonErrorHandler(auditConnector, httpAuditEvent, configuration) {
 
   override def onClientError(request: RequestHeader, statusCode: Int, message: String): Future[Result] = {
     implicit val req = request
@@ -45,9 +45,6 @@ class ErrorHandler @Inject()(auditConnector: AuditConnector)(
     }
   }
 
-  override def onServerError(request: RequestHeader, exception: Throwable): Future[Result] = {
-    implicit val req: RequestHeader = request
-
+  override def onServerError(request: RequestHeader, exception: Throwable): Future[Result] =
     super.onServerError(request, exception).map(_ => standardInternalServerError)
-  }
 }

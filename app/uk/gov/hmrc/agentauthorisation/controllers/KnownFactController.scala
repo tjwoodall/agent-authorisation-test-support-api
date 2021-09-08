@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,19 +21,23 @@ import java.time.format.DateTimeFormatter
 import com.google.inject.Provider
 import javax.inject.{Inject, Singleton}
 import play.api.libs.json.{Format, Json}
-import play.api.mvc.{Action, AnyContent, Controller}
+import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.agentauthorisation.connectors.AgentsExternalStubsConnector
 import uk.gov.hmrc.agentauthorisation.models.User
 import uk.gov.hmrc.agentmtdidentifiers.model.Vrn
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.http.logging.{Authorization, SessionId}
+import uk.gov.hmrc.http.{Authorization, SessionId}
+import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class KnownFactController @Inject()(stubsConnector: AgentsExternalStubsConnector, ecp: Provider[ExecutionContext])
-    extends Controller {
+class KnownFactController @Inject()(
+  stubsConnector: AgentsExternalStubsConnector,
+  ecp: Provider[ExecutionContext],
+  controllerComponents: ControllerComponents)
+    extends BackendController(controllerComponents) {
 
   implicit val ec: ExecutionContext = ecp.get
 
@@ -41,7 +45,7 @@ class KnownFactController @Inject()(stubsConnector: AgentsExternalStubsConnector
 
   private val dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
-  def prepareMtdVatKnownFact(vrn: Vrn): Action[AnyContent] = Action.async { implicit request =>
+  def prepareMtdVatKnownFact(vrn: Vrn): Action[AnyContent] = Action.async {
     val user =
       User(
         affinityGroup = "Organisation",
@@ -64,7 +68,7 @@ class KnownFactController @Inject()(stubsConnector: AgentsExternalStubsConnector
       }
   }
 
-  def prepareMtdItKnownFact(nino: Nino): Action[AnyContent] = Action.async { implicit request =>
+  def prepareMtdItKnownFact(nino: Nino): Action[AnyContent] = Action.async {
     val user =
       User(
         affinityGroup = "Individual",

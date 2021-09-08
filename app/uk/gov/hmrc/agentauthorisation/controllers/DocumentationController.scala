@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import play.api.http.HttpErrorHandler
 import play.api.libs.json.Json
 import play.api.mvc._
 import uk.gov.hmrc.agentauthorisation.views.txt
+import controllers.Assets
 
 case class ApiAccess(`type`: String, whitelistedApplicationIds: Seq[String])
 
@@ -30,8 +31,12 @@ object ApiAccess {
 }
 
 @Singleton
-class DocumentationController @Inject()(errorHandler: HttpErrorHandler, configuration: Configuration)
-    extends uk.gov.hmrc.api.controllers.DocumentationController(errorHandler = errorHandler) {
+class DocumentationController @Inject()(
+  errorHandler: HttpErrorHandler,
+  configuration: Configuration,
+  cc: ControllerComponents,
+  assets: Assets)
+    extends uk.gov.hmrc.api.controllers.DocumentationController(cc, assets, errorHandler) {
 
   private lazy val apiAccess = {
     val accessConfig = configuration.getConfig("api.access")
