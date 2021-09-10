@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,19 +16,21 @@
 
 package uk.gov.hmrc.agentauthorisation.controllers
 
-import org.scalatestplus.play.OneServerPerSuite
+import org.scalatest.{Matchers, OptionValues, WordSpecLike}
+import org.scalatest.concurrent.ScalaFutures
+import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.ws.WSClient
 import uk.gov.hmrc.agentauthorisation.stubs.DataStreamStubs
 import uk.gov.hmrc.agentauthorisation.support.{Resource, WireMockSupport}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
-import uk.gov.hmrc.play.test.UnitSpec
 
-import scala.language.postfixOps
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class ApiPlatformISpec extends UnitSpec with OneServerPerSuite with WireMockSupport with DataStreamStubs {
+class ApiPlatformISpec
+    extends WordSpecLike with Matchers with OptionValues with ScalaFutures with GuiceOneServerPerSuite
+    with WireMockSupport with DataStreamStubs {
 
   override implicit lazy val app: Application = appBuilder.build()
 

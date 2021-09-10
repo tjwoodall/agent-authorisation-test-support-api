@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,13 @@
 
 package uk.gov.hmrc.agentauthorisation.controllers
 
-import controllers.AssetsBuilder
+import controllers.{AssetsBuilder, AssetsMetadata}
 import javax.inject.{Inject, Singleton}
 import play.api.http.HttpErrorHandler
 
 @Singleton
-class RamlController @Inject()(errorHandler: HttpErrorHandler) extends AssetsBuilder(errorHandler) {
+class RamlController @Inject()(errorHandler: HttpErrorHandler, meta: AssetsMetadata)
+    extends AssetsBuilder(errorHandler, meta) {
 
   def raml(version: String, file: String) =
     super.at(s"/public/api/conf/$version", file)

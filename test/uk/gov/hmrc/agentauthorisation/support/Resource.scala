@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,7 @@
 package uk.gov.hmrc.agentauthorisation.support
 
 import play.api.http.{HeaderNames, MimeTypes}
-import play.api.libs.ws.{WS, WSClient, WSRequest, WSResponse}
-import play.api.mvc.Results
+import play.api.libs.ws.{WSClient, WSRequest, WSResponse}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.http.ws.WSHttpResponse
 
@@ -37,19 +36,17 @@ object Http {
     hc: HeaderCarrier,
     ec: ExecutionContext,
     ws: WSClient): HttpResponse = perform(url) { request =>
-    request.withHeaders(headers: _*).post(body)
+    request.withHttpHeaders(headers: _*).post(body)
   }
 
   def postEmpty(url: String)(implicit hc: HeaderCarrier, ec: ExecutionContext, ws: WSClient): HttpResponse =
     perform(url) { request =>
-      import play.api.http.Writeable._
-      request.post(Results.EmptyContent())
+      request.execute("POST")
     }
 
   def putEmpty(url: String)(implicit hc: HeaderCarrier, ec: ExecutionContext, ws: WSClient): HttpResponse =
     perform(url) { request =>
-      import play.api.http.Writeable._
-      request.put(Results.EmptyContent())
+      request.execute("PUT")
     }
 
   def delete(url: String)(implicit hc: HeaderCarrier, ec: ExecutionContext, ws: WSClient): HttpResponse = perform(url) {
@@ -61,12 +58,12 @@ object Http {
     implicit
     hc: HeaderCarrier,
     ec: ExecutionContext,
-    ws: WSClient): WSHttpResponse =
+    ws: WSClient): HttpResponse =
     await(
       fun(
         ws.url(url)
-          .withHeaders(hc.headers: _*)
-          .withRequestTimeout(20000 milliseconds)).map(new WSHttpResponse(_)))
+          .withHttpHeaders(hc.headers(hc.names.explicitlyIncludedHeaders): _*)
+          .withRequestTimeout(20000 milliseconds)).map(WSHttpResponse(_)))
 
   private def await[A](future: Future[A]) =
     Await.result(future, Duration(10, SECONDS))

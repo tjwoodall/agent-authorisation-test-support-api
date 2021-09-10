@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,39 +16,20 @@
 
 package uk.gov.hmrc.agentauthorisation.support
 
-import java.security.cert.X509Certificate
-
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
-import org.mockito.Mockito.when
-import org.scalatestplus.mockito.MockitoSugar
-import org.scalatestplus.play.OneAppPerSuite
-import play.api.mvc.{Headers, RequestHeader}
-import play.api.test.FakeRequest
+import org.scalatest.OptionValues
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import uk.gov.hmrc.agentmtdidentifiers.model.Arn
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.test.UnitSpec
+import org.scalatest._
+import org.scalatest.concurrent.ScalaFutures
 
-import scala.concurrent.Future
-
-abstract class BaseSpec extends UnitSpec with MockitoSugar with OneAppPerSuite {
+abstract class BaseSpec
+    extends WordSpecLike with Matchers with OptionValues with ScalaFutures with GuiceOneAppPerSuite {
   implicit val sys: ActorSystem = ActorSystem("TestSystem")
   implicit val mat: ActorMaterializer = ActorMaterializer()
   implicit val hc: HeaderCarrier = HeaderCarrier()
 
   val arn: Arn = Arn("TARN0000001")
-
-  def testRequest[A](fakeRequest: FakeRequest[A]): RequestHeader = new RequestHeader {
-    override def id: Long = fakeRequest.id
-    override def tags: Map[String, String] = fakeRequest.tags
-    override def uri: String = fakeRequest.uri
-    override def path: String = fakeRequest.path
-    override def method: String = fakeRequest.method
-    override def version: String = fakeRequest.version
-    override def queryString: Map[String, Seq[String]] = fakeRequest.queryString
-    override def headers: Headers = fakeRequest.headers
-    override def remoteAddress: String = fakeRequest.remoteAddress
-    override def secure: Boolean = fakeRequest.secure
-    override def clientCertificateChain: Option[Seq[X509Certificate]] = fakeRequest.clientCertificateChain
-  }
 }

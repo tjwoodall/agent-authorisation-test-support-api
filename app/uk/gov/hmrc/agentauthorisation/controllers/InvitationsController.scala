@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,23 +17,24 @@
 package uk.gov.hmrc.agentauthorisation.controllers
 
 import javax.inject.{Inject, Singleton}
-import play.api.mvc.{Action, AnyContent, Controller}
+import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.agentauthorisation.connectors.{AgentsExternalStubsConnector, InvitationsConnector}
 import uk.gov.hmrc.agentauthorisation.models.Invitation
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.http.logging.{Authorization, SessionId}
+import uk.gov.hmrc.http.{Authorization, HeaderCarrier, SessionId}
+import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class InvitationsController @Inject()(
   invitationsConnector: InvitationsConnector,
-  agentsExternalStubsConnector: AgentsExternalStubsConnector)(implicit ec: ExecutionContext)
-    extends Controller {
+  agentsExternalStubsConnector: AgentsExternalStubsConnector,
+  controllerComponents: ControllerComponents)(implicit ec: ExecutionContext)
+    extends BackendController(controllerComponents) {
 
   implicit val hc: HeaderCarrier = HeaderCarrier()
 
-  def acceptInvitation(id: String): Action[AnyContent] = Action.async { implicit request =>
+  def acceptInvitation(id: String): Action[AnyContent] = Action.async {
     for {
       headerCarrier(hcStubs1, url1) <- agentsExternalStubsConnector.signIn("Alf")
       maybeInvitation               <- invitationsConnector.getInvitation(id)(hcStubs1, ec)
@@ -71,7 +72,7 @@ class InvitationsController @Inject()(
     } yield result1
   }
 
-  def rejectInvitation(id: String): Action[AnyContent] = Action.async { implicit request =>
+  def rejectInvitation(id: String): Action[AnyContent] = Action.async {
     for {
       headerCarrier(hcStubs1, url1) <- agentsExternalStubsConnector.signIn("Alf")
       maybeInvitation               <- invitationsConnector.getInvitation(id)(hcStubs1, ec)
