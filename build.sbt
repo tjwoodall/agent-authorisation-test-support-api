@@ -11,27 +11,27 @@ lazy val scoverageSettings = {
     ScoverageKeys.coverageMinimum := 60.00, // reduced to 60% as a temporary measure as the recent upgrade caused a dip in the reported coverage
     ScoverageKeys.coverageFailOnMinimum := false,
     ScoverageKeys.coverageHighlighting := true,
-    parallelExecution in Test := false
+    Test / parallelExecution := false
   )
 }
 
 lazy val compileDeps = Seq(
   ws,
-  "uk.gov.hmrc" %% "bootstrap-backend-play-27" % "5.9.0",
-  "uk.gov.hmrc" %% "agent-mtd-identifiers" % "0.25.0-play-27",
-  "uk.gov.hmrc" %% "agent-kenshoo-monitoring" % "4.8.0-play-27",
-  "uk.gov.hmrc" %% "simple-reactivemongo" % "8.0.0-play-27",
-  "uk.gov.hmrc" %% "play-hal" % "3.1.0-play-27",
-  "uk.gov.hmrc" %% "play-hmrc-api" % "6.4.0-play-27",
+  "uk.gov.hmrc" %% "bootstrap-backend-play-28" % "5.18.0",
+  "uk.gov.hmrc" %% "agent-mtd-identifiers" % "0.33.0-play-28",
+  "uk.gov.hmrc" %% "agent-kenshoo-monitoring" % "4.8.0-play-28",
+  "uk.gov.hmrc" %% "simple-reactivemongo" % "8.0.0-play-28",
+  "uk.gov.hmrc" %% "play-hal" % "3.1.0-play-28",
+  "uk.gov.hmrc" %% "play-hmrc-api" % "6.4.0-play-28",
   "com.github.blemale" %% "scaffeine" % "3.1.0",
   ws
 )
 
 def testDeps(scope: String) = Seq(
-  "org.mockito" % "mockito-core" % "3.2.0" % scope,
-  "org.scalatestplus.play" %% "scalatestplus-play" % "4.0.3" % scope,
-  "uk.gov.hmrc" %% "bootstrap-test-play-27" % "5.9.0" % scope,
-  "uk.gov.hmrc" %% "reactivemongo-test" % "5.0.0-play-27" % scope,
+  "org.scalatestplus.play" %% "scalatestplus-play" % "5.1.0" % scope,
+  "org.scalatestplus" %% "mockito-3-12" % "3.2.10.0" % scope,
+  "uk.gov.hmrc" %% "bootstrap-test-play-28" % "5.18.0" % scope,
+  "uk.gov.hmrc" %% "reactivemongo-test" % "5.0.0-play-28" % scope,
   "com.github.tomakehurst" % "wiremock-jre8" % "2.26.1" % scope,
   "org.pegdown" % "pegdown" % "1.6.0" % scope,
   "com.typesafe.play" %% "play-test" % PlayVersion.current % scope
@@ -54,19 +54,18 @@ lazy val root = (project in file("."))
     routesImport += "uk.gov.hmrc.agentauthorisation.binders.UrlBinders._",
     publishingSettings,
     scoverageSettings,
-    unmanagedResourceDirectories in Compile += baseDirectory.value / "resources",
+    Compile / unmanagedResourceDirectories += baseDirectory.value / "resources",
     majorVersion := 0,
-    scalafmtOnCompile in Compile := true,
-    scalafmtOnCompile in Test := true
+    Compile / scalafmtOnCompile := true,
+    Test / scalafmtOnCompile := true
   )
   .configs(IntegrationTest)
   .settings(
-    Keys.fork in IntegrationTest := false,
+    IntegrationTest / Keys.fork := false,
     Defaults.itSettings,
-    unmanagedSourceDirectories in IntegrationTest += baseDirectory(_ / "it").value,
-    parallelExecution in IntegrationTest := false,
-    testGrouping in IntegrationTest := oneForkedJvmPerTest((definedTests in IntegrationTest).value),
-    scalafmtOnCompile in IntegrationTest := true
+    IntegrationTest / unmanagedSourceDirectories += baseDirectory(_ / "it").value,
+    IntegrationTest / parallelExecution := false,
+    IntegrationTest / testGrouping := oneForkedJvmPerTest((IntegrationTest / definedTests).value)
   )
   .enablePlugins(PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin, SbtArtifactory)
 
