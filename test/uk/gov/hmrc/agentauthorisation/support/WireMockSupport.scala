@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration._
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach, Suite}
-import play.api.Logger.debug
+import play.api.Logger
 
 import scala.annotation.tailrec
 
@@ -75,6 +75,7 @@ object Port {
   val rnd = new scala.util.Random
   val range = 8000 to 39999
   val usedPorts = List[Int]()
+  val logger = Logger(getClass)
 
   @tailrec
   def randomAvailable: Int =
@@ -84,11 +85,11 @@ object Port {
       case p: Int => {
         available(p) match {
           case false => {
-            debug(s"Port $p is in use, trying another")
+            logger.debug(s"Port $p is in use, trying another")
             randomAvailable
           }
           case true => {
-            debug("Taking port : " + p)
+            logger.debug("Taking port : " + p)
             usedPorts :+ p
             p
           }

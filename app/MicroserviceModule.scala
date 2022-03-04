@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ class MicroserviceModule(val environment: Environment, val configuration: Config
 
     val loggerDateFormat: Option[String] =
       configuration.getOptional[String]("logger.json.dateformat")
-    Logger.info(s"Starting microservice : $appName : in mode : ${environment.mode}")
+    Logger(getClass).info(s"Starting microservice : $appName : in mode : ${environment.mode}")
     MDC.put("appName", appName)
     loggerDateFormat.foreach(str => MDC.put("logger.json.dateformat", str))
 

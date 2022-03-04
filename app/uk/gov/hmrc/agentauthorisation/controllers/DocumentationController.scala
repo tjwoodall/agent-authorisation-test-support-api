@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import play.api.mvc._
 import uk.gov.hmrc.agentauthorisation.views.txt
 import controllers.Assets
 
-case class ApiAccess(`type`: String, whitelistedApplicationIds: Seq[String])
+case class ApiAccess(`type`: String, allowlistedApplicationIds: Seq[String])
 
 object ApiAccess {
   implicit lazy val formats = Json.format[ApiAccess]
@@ -39,10 +39,9 @@ class DocumentationController @Inject()(
     extends uk.gov.hmrc.api.controllers.DocumentationController(cc, assets, errorHandler) {
 
   private lazy val apiAccess = {
-    val accessConfig = configuration.getConfig("api.access")
-    val accessType = accessConfig.get.getString("type").getOrElse("PUBLIC")
-    val whiteList = Seq.empty
-    ApiAccess(accessType, whiteList)
+    val accessType = configuration.getOptional[String]("api.access.type").getOrElse("PUBLIC")
+    val allowList = Seq.empty
+    ApiAccess(accessType, allowList)
   }
 
   override def definition(): Action[AnyContent] = Action {
