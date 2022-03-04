@@ -37,7 +37,11 @@ class ErrorHandlerSpec extends BaseSpec {
   trait BaseSetup {
     implicit val sys = ActorSystem("MyTest")
     implicit val mat = ActorMaterializer()
-    implicit val configuration = Configuration("bootstrap.errorHandler.warnOnly.statusCodes" -> List.empty) // I have had to hardcode this value or the tests fail with: com.typesafe.config.ConfigException$Missing: hardcoded value: No configuration setting found for key 'bootstrap'.
+    implicit val configuration = Configuration(
+      "bootstrap.errorHandler.warnOnly.statusCodes"     -> List.empty,
+      "bootstrap.errorHandler.suppress4xxErrorMessages" -> false,
+      "bootstrap.errorHandler.suppress5xxErrorMessages" -> false
+    )
 
     implicit val fakeRequest = FakeRequest()
     val mockAuditConnector = mock[AuditConnector]
