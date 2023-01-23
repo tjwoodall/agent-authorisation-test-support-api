@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,22 +16,20 @@
 
 package uk.gov.hmrc.agentauthorisation.connectors
 
-import java.net.URL
-import java.nio.charset.StandardCharsets
-
 import com.codahale.metrics.MetricRegistry
 import com.kenshoo.play.metrics.Metrics
-import javax.inject.{Inject, Named, Singleton}
 import play.api.http.HeaderNames
 import play.api.libs.json.{JsObject, Json}
 import play.utils.UriEncoding
 import uk.gov.hmrc.agent.kenshoo.monitoring.HttpAPIMonitor
-import uk.gov.hmrc.agentauthorisation.models.{BusinessDetails, EnrolmentInfo, User, VatCustomerInfo}
+import uk.gov.hmrc.agentauthorisation.models.{BusinessDetails, User, VatCustomerInfo}
 import uk.gov.hmrc.agentmtdidentifiers.model.Vrn
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.http._
-import uk.gov.hmrc.http.Authorization
+import uk.gov.hmrc.http.{Authorization, _}
 
+import java.net.URL
+import java.nio.charset.StandardCharsets
+import javax.inject.{Inject, Named, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class AgentsExternalStubsConnector @Inject()(
@@ -63,7 +61,7 @@ class AgentsExternalStubsConnector @Inject()(
       .POST[User, HttpResponse](s"$baseUrl/agents-external-stubs/users", user)
       .map(_ => ())
       .recover {
-        case e: Upstream4xxResponse if e.upstreamResponseCode == 409 => ()
+        case e: UpstreamErrorResponse if e.statusCode == 409 => ()
       }
 
   def updateCurrentUser(user: User)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] =
@@ -71,13 +69,16 @@ class AgentsExternalStubsConnector @Inject()(
       .PUT[User, HttpResponse](s"$baseUrl/agents-external-stubs/users", user)
       .map(_ => ())
       .recover {
-        case e: Upstream4xxResponse if e.upstreamResponseCode == 409 => ()
+        case e: UpstreamErrorResponse if e.statusCode == 409 => ()
       }
 
-  def getEnrolmentInfo(enrolmentKey: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[EnrolmentInfo] =
+  def getUserIdForEnrolment(enrolmentKey: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[String] =
     http
-      .GET[EnrolmentInfo](s"$baseUrl/agents-external-stubs/known-facts/${UriEncoding
+      .GET[HttpResponse](s"$baseUrl/agents-external-stubs/known-facts/${UriEncoding
         .encodePathSegment(enrolmentKey, StandardCharsets.UTF_8.name)}")
+      .map { response =>
+        (response.json \ "user" \ "userId").as[String]
+      }
 
   def getBusinessDetails(
     nino: Nino)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[BusinessDetails]] =

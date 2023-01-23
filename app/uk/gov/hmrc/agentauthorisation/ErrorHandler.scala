@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,9 +32,7 @@ class ErrorHandler @Inject()(auditConnector: AuditConnector, httpAuditEvent: Htt
   configuration: Configuration)
     extends JsonErrorHandler(auditConnector, httpAuditEvent, configuration) {
 
-  override def onClientError(request: RequestHeader, statusCode: Int, message: String): Future[Result] = {
-    implicit val req = request
-
+  override def onClientError(request: RequestHeader, statusCode: Int, message: String): Future[Result] =
     super.onClientError(request, statusCode, message).map { auditedError =>
       statusCode match {
         case NOT_FOUND    => standardNotFound
@@ -43,7 +41,6 @@ class ErrorHandler @Inject()(auditConnector: AuditConnector, httpAuditEvent: Htt
         case _            => auditedError
       }
     }
-  }
 
   override def onServerError(request: RequestHeader, exception: Throwable): Future[Result] =
     super.onServerError(request, exception).map(_ => standardInternalServerError)

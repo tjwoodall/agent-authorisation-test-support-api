@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,13 @@
 
 package uk.gov.hmrc.agentauthorisation.controllers
 
-import javax.inject.{Inject, Singleton}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.agentauthorisation.connectors.{AgentsExternalStubsConnector, InvitationsConnector}
 import uk.gov.hmrc.agentauthorisation.models.Invitation
 import uk.gov.hmrc.http.{Authorization, HeaderCarrier, SessionId}
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -36,21 +36,16 @@ class InvitationsController @Inject()(
 
   def acceptInvitation(id: String): Action[AnyContent] = Action.async {
     for {
-      headerCarrier(hcStubs1, url1) <- agentsExternalStubsConnector.signIn("Alf")
-      maybeInvitation               <- invitationsConnector.getInvitation(id)(hcStubs1, ec)
+      headerCarrier(hcStubs1, _) <- agentsExternalStubsConnector.signIn("Alf")
+      maybeInvitation            <- invitationsConnector.getInvitation(id)(hcStubs1, ec)
       result1 <- maybeInvitation match {
                   case Some(invitation) =>
                     invitation.status match {
                       case "Pending" =>
                         for {
-                          enrolmentInfo <- agentsExternalStubsConnector
-                                            .getEnrolmentInfo(enrolmentKeyFor(invitation))(hcStubs1, ec)
-                          headerCarrier(hcStubs2, url2) <- agentsExternalStubsConnector.signIn(
-                                                            enrolmentInfo.user
-                                                              .flatMap(_.userId)
-                                                              .getOrElse(throw new Exception(
-                                                                s"serId not found for an invitation ${enrolmentKeyFor(
-                                                                  invitation)}")))
+                          userId <- agentsExternalStubsConnector
+                                     .getUserIdForEnrolment(enrolmentKeyFor(invitation))(hcStubs1, ec)
+                          headerCarrier(hcStubs2, url2) <- agentsExternalStubsConnector.signIn(userId)
                           result2 <- invitationsConnector
                                       .acceptInvitation(id, invitation.clientId, invitation.clientIdType)(hcStubs2, ec)
                                       .map {
@@ -81,14 +76,9 @@ class InvitationsController @Inject()(
                     invitation.status match {
                       case "Pending" =>
                         for {
-                          enrolmentInfo <- agentsExternalStubsConnector
-                                            .getEnrolmentInfo(enrolmentKeyFor(invitation))(hcStubs1, ec)
-                          headerCarrier(hcStubs2, url2) <- agentsExternalStubsConnector.signIn(
-                                                            enrolmentInfo.user
-                                                              .flatMap(_.userId)
-                                                              .getOrElse(throw new Exception(
-                                                                s"userId not found for an invitation ${enrolmentKeyFor(
-                                                                  invitation)}")))
+                          userId <- agentsExternalStubsConnector
+                                     .getUserIdForEnrolment(enrolmentKeyFor(invitation))(hcStubs1, ec)
+                          headerCarrier(hcStubs2, url2) <- agentsExternalStubsConnector.signIn(userId)
                           result2 <- invitationsConnector
                                       .rejectInvitation(id, invitation.clientId, invitation.clientIdType)(hcStubs2, ec)
                                       .map {
