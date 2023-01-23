@@ -16,20 +16,18 @@
 
 package uk.gov.hmrc.agentauthorisation.controllers
 
-import java.time.format.DateTimeFormatter
-
 import com.google.inject.Provider
-import javax.inject.{Inject, Singleton}
 import play.api.libs.json.{Format, Json}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.agentauthorisation.connectors.AgentsExternalStubsConnector
-import uk.gov.hmrc.agentauthorisation.models.User
+import uk.gov.hmrc.agentauthorisation.models.{EnrolmentKey, Identifier, User}
 import uk.gov.hmrc.agentmtdidentifiers.model.Vrn
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.http.{Authorization, SessionId}
+import uk.gov.hmrc.http.{Authorization, HeaderCarrier, SessionId}
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
+import java.time.format.DateTimeFormatter
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
@@ -48,8 +46,8 @@ class KnownFactController @Inject()(
   def prepareMtdVatKnownFact(vrn: Vrn): Action[AnyContent] = Action.async {
     val user =
       User(
-        affinityGroup = "Organisation",
-        principalEnrolments = Seq(User.Enrolment("HMRC-MTD-VAT", Some(Seq(User.Identifier("VRN", vrn.value))))))
+        userId = null,
+        assignedPrincipalEnrolments = Seq(EnrolmentKey("HMRC-MTD-VAT", Seq(Identifier("VRN", vrn.value)))))
     for {
       (authorizationToken, sessionId, _) <- stubsConnector
                                              .signIn("Alf")(HeaderCarrier(), ec)
@@ -71,10 +69,10 @@ class KnownFactController @Inject()(
   def prepareMtdItKnownFact(nino: Nino): Action[AnyContent] = Action.async {
     val user =
       User(
-        affinityGroup = "Individual",
+        userId = null,
         nino = Some(nino),
-        confidenceLevel = Some(200),
-        principalEnrolments = Seq(User.Enrolment("HMRC-MTD-IT")))
+        confidenceLevel = Some(250),
+        assignedPrincipalEnrolments = Seq(EnrolmentKey("HMRC-MTD-IT", Seq.empty)))
     for {
       (authorizationToken, sessionId, _) <- stubsConnector
                                              .signIn("Alf")(HeaderCarrier(), ec)
