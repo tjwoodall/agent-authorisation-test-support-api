@@ -42,8 +42,7 @@ lazy val root = (project in file("."))
     scalaVersion := "2.12.15",
     PlayKeys.playDefaultPort := 9443,
     resolvers ++= Seq(
-      Resolver.typesafeRepo("releases"),
-      Resolver.jcenterRepo
+      Resolver.typesafeRepo("releases")
     ),
     resolvers += "HMRC-open-artefacts-maven" at "https://open.artefacts.tax.service.gov.uk/maven2",
     resolvers += Resolver.url("HMRC-open-artefacts-ivy", url("https://open.artefacts.tax.service.gov.uk/ivy2"))(Resolver.ivyStylePatterns),
