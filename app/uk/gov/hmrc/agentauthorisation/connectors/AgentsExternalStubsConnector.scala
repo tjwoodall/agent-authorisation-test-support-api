@@ -25,16 +25,17 @@ import uk.gov.hmrc.agent.kenshoo.monitoring.HttpAPIMonitor
 import uk.gov.hmrc.agentauthorisation.models.{BusinessDetails, User, VatCustomerInfo}
 import uk.gov.hmrc.agentmtdidentifiers.model.Vrn
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.http.{Authorization, _}
+import uk.gov.hmrc.http.{Authorization, HeaderCarrier, HttpClient, HttpReads, HttpResponse, UpstreamErrorResponse}
 
 import java.net.URL
 import java.nio.charset.StandardCharsets
 import javax.inject.{Inject, Named, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+
 @Singleton
 class AgentsExternalStubsConnector @Inject()(
   @Named("agents-external-stubs-baseUrl") baseUrl: URL,
-  http: HttpPost with HttpGet with HttpPut,
+  http: HttpClient,
   metrics: Metrics)
     extends HttpAPIMonitor {
 

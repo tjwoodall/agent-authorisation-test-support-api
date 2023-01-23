@@ -21,21 +21,26 @@ import play.api.libs.json.{Format, Json}
 import uk.gov.hmrc.domain.Nino
 
 case class User(
-  userId: Option[String] = None,
-  affinityGroup: String,
+  userId: String,
+  groupId: Option[String] = None,
   confidenceLevel: Option[Int] = None,
   credentialStrength: Option[String] = None,
   credentialRole: Option[String] = None,
   nino: Option[Nino] = None,
-  principalEnrolments: Seq[User.Enrolment] = Seq.empty,
+  assignedPrincipalEnrolments: Seq[EnrolmentKey] = Seq.empty,
+  assignedDelegatedEnrolments: Seq[EnrolmentKey] = Seq.empty,
+  name: Option[String] = None,
   dateOfBirth: Option[LocalDate] = None,
-  address: Option[User.Address] = None
+  planetId: Option[String] = None,
+  isNonCompliant: Option[Boolean] = None,
+  complianceIssues: Option[Seq[String]] = None,
+  recordIds: Seq[String] = Seq.empty,
+  address: Option[User.Address] = None,
+  //additionalInformation: Option[AdditionalInformation] = None,
+  strideRoles: Seq[String] = Seq.empty
 )
 
 object User {
-
-  case class Identifier(key: String, value: String)
-  case class Enrolment(key: String, identifiers: Option[Seq[Identifier]] = None)
 
   case class Address(
     line1: Option[String] = None,
@@ -45,8 +50,6 @@ object User {
     postcode: Option[String] = None,
     countryCode: Option[String] = None)
 
-  implicit val format1: Format[Identifier] = Json.format[Identifier]
-  implicit val format2: Format[Enrolment] = Json.format[Enrolment]
   implicit val format3: Format[Address] = Json.format[Address]
   implicit val formats: Format[User] = Json.format
 }

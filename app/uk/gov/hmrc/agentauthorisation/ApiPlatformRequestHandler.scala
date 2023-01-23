@@ -19,6 +19,7 @@ package uk.gov.hmrc.agentauthorisation
 import play.api.http.{DefaultHttpRequestHandler, HttpConfiguration, HttpErrorHandler, HttpFilters}
 import play.api.mvc.{Handler, RequestHeader}
 import play.api.routing.Router
+import play.core.DefaultWebCommands
 
 import javax.inject.Inject
 
@@ -32,7 +33,14 @@ class ApiPlatformRequestHandler @Inject()(
   errorHandler: HttpErrorHandler,
   configuration: HttpConfiguration,
   filters: HttpFilters)
-    extends DefaultHttpRequestHandler(router, errorHandler, configuration, filters) {
+    extends DefaultHttpRequestHandler(
+      new DefaultWebCommands,
+      None,
+      router,
+      errorHandler,
+      configuration,
+      filters.filters
+    ) {
 
   val context = "/agent-authorisation-test-support"
   val health = "/ping"
