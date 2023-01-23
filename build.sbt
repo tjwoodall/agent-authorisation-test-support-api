@@ -18,7 +18,7 @@ lazy val scoverageSettings = {
 lazy val compileDeps = Seq(
   ws,
   "uk.gov.hmrc" %% "bootstrap-backend-play-28" % "7.12.0",
-  "uk.gov.hmrc" %% "agent-mtd-identifiers" % "0.50.0-play-28",
+  "uk.gov.hmrc" %% "agent-mtd-identifiers" % "0.54.0-play-28",
   "uk.gov.hmrc" %% "agent-kenshoo-monitoring" % "4.8.0-play-28",
   "uk.gov.hmrc" %% "play-hmrc-api" % "7.1.0-play-28",
   "com.github.blemale" %% "scaffeine" % "3.1.0",
@@ -49,7 +49,6 @@ lazy val root = (project in file("."))
     resolvers += Resolver.url("HMRC-open-artefacts-ivy", url("https://open.artefacts.tax.service.gov.uk/ivy2"))(Resolver.ivyStylePatterns),
     libraryDependencies ++= compileDeps ++ testDeps("test") ++ testDeps("it"),
     routesImport += "uk.gov.hmrc.agentauthorisation.binders.UrlBinders._",
-    publishingSettings,
     scoverageSettings,
     Compile / unmanagedResourceDirectories += baseDirectory.value / "resources",
     majorVersion := 0,
