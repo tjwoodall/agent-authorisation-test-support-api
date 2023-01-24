@@ -57,9 +57,9 @@ class AgentsExternalStubsConnector @Inject()(
         )
       )
 
-  def createUser(user: User)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] =
+  def createUser(user: User, affinityGroup: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] =
     http
-      .POST[User, HttpResponse](s"$baseUrl/agents-external-stubs/users", user)
+      .POST[User, HttpResponse](s"$baseUrl/agents-external-stubs/users?affinityGroup=$affinityGroup", user)
       .map(_ => ())
       .recover {
         case e: UpstreamErrorResponse if e.statusCode == 409 => ()
