@@ -16,40 +16,16 @@
 
 package uk.gov.hmrc.agentauthorisation.models
 
-import java.time.LocalDate
 import play.api.libs.json.{Format, Json}
 import uk.gov.hmrc.domain.Nino
 
 case class User(
   userId: String,
-  groupId: Option[String] = None,
-  confidenceLevel: Option[Int] = None,
-  credentialStrength: Option[String] = None,
-  credentialRole: Option[String] = None,
-  nino: Option[Nino] = None,
   assignedPrincipalEnrolments: Seq[EnrolmentKey] = Seq.empty,
-  assignedDelegatedEnrolments: Seq[EnrolmentKey] = Seq.empty,
-  name: Option[String] = None,
-  dateOfBirth: Option[LocalDate] = None,
-  planetId: Option[String] = None,
-  isNonCompliant: Option[Boolean] = None,
-  complianceIssues: Option[Seq[String]] = None,
-  recordIds: Seq[String] = Seq.empty,
-  address: Option[User.Address] = None,
-  //additionalInformation: Option[AdditionalInformation] = None,
-  strideRoles: Seq[String] = Seq.empty
+  nino: Option[Nino] = None,
+  confidenceLevel: Option[Int] = None
 )
 
 object User {
-
-  case class Address(
-    line1: Option[String] = None,
-    line2: Option[String] = None,
-    line3: Option[String] = None,
-    line4: Option[String] = None,
-    postcode: Option[String] = None,
-    countryCode: Option[String] = None)
-
-  implicit val format3: Format[Address] = Json.format[Address]
   implicit val formats: Format[User] = Json.format
 }

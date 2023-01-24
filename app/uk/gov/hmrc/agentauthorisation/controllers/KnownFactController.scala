@@ -43,6 +43,8 @@ class KnownFactController @Inject()(
 
   private val dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
+  private val Individual = "Individual"
+
   def prepareMtdVatKnownFact(vrn: Vrn): Action[AnyContent] = Action.async {
     val user =
       User(
@@ -54,13 +56,13 @@ class KnownFactController @Inject()(
       hc = HeaderCarrier(
         authorization = Some(Authorization(authorizationToken)),
         sessionId = Some(SessionId(sessionId)))
-      _ <- stubsConnector.createUser(user)(hc, ec)
+      _ <- stubsConnector.createUser(user, Individual)(hc, ec)
       vatCustomerInformation <- stubsConnector
                                  .getVatCustomerInformation(vrn)(hc, ec)
     } yield
       vatCustomerInformation.flatMap(_.effectiveRegistrationDate) match {
         case Some(date) =>
-          Ok(Json.toJson(KnownFactResponse(Seq("MTD-VAT"), "business", "vrn", vrn.value, date.format(dateFormat))))
+          Ok(Json.toJson(KnownFactResponse(Seq("MTD-VAT"), "personal", "vrn", vrn.value, date.format(dateFormat))))
         case None =>
           InternalServerError("Missing VAT Registration Date verifier")
       }
@@ -79,7 +81,7 @@ class KnownFactController @Inject()(
       hc = HeaderCarrier(
         authorization = Some(Authorization(authorizationToken)),
         sessionId = Some(SessionId(sessionId)))
-      _               <- stubsConnector.createUser(user)(hc, ec)
+      _               <- stubsConnector.createUser(user, Individual)(hc, ec)
       businessDetails <- stubsConnector.getBusinessDetails(nino)(hc, ec)
     } yield
       businessDetails.flatMap(
