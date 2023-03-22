@@ -20,33 +20,16 @@ import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.{status => _, _}
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration._
-import org.scalatest._
-import org.scalatestplus.play.guice.GuiceOneAppPerTest
 import play.api.http.Status.{NO_CONTENT, OK}
-import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
-import play.api.{Application, Mode}
 import play.api.test.Helpers._
+import uk.gov.hmrc.agentauthorisation.support.BaseISpec
 
-class PlatformIntegrationSpec
-    extends WordSpecLike with Matchers with OptionValues with GuiceOneAppPerTest with BeforeAndAfterEach {
+class PlatformIntegrationSpec extends BaseISpec {
 
   val stubHost = "localhost"
   val stubPort = 11112
-//    sys.env.getOrElse("WIREMOCK_SERVICE_LOCATOR_PORT", "11112").toInt
   val wireMockServer = new WireMockServer(wireMockConfig().port(stubPort))
-
-  override def newAppForTest(testData: TestData): Application =
-    GuiceApplicationBuilder()
-      .configure("run.mode" -> "Stub")
-      .configure(
-        Map(
-          "appName"          -> "application-name",
-          "appUrl"           -> "http://example.com",
-          "auditing.enabled" -> false
-        ))
-      .in(Mode.Test)
-      .build()
 
   override def beforeEach() {
     wireMockServer.start()
@@ -57,11 +40,9 @@ class PlatformIntegrationSpec
   }
 
   trait Setup {
-    implicit def mat: akka.stream.Materializer =
-      app.injector.instanceOf[akka.stream.Materializer]
     val documentationController =
       app.injector.instanceOf[DocumentationController]
-    val ramlController = app.injector.instanceOf[YamlController]
+    val yamlController = app.injector.instanceOf[YamlController]
     val request = FakeRequest()
   }
 
@@ -99,11 +80,11 @@ class PlatformIntegrationSpec
         }
     }
 
-    "provide raml documentation" in new Setup {
-      val result = ramlController.yaml("1.0", "application.raml")(request)
+    "provide yaml documentation" in new Setup {
+      val result = yamlController.yaml("1.0", "application.yaml")(request)
 
       status(result) shouldBe OK
-      contentAsString(result) should startWith("#%RAML 1.0")
+      contentAsString(result) should startWith("openapi: 3.0.3")
     }
   }
 

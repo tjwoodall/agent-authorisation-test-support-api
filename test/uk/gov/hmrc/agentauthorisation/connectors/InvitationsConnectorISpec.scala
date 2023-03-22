@@ -16,13 +16,13 @@
 
 package uk.gov.hmrc.agentauthorisation.connectors
 
-import java.time.LocalDate
 import uk.gov.hmrc.agentauthorisation.models.Invitation
 import uk.gov.hmrc.agentauthorisation.stubs.{ACAStubs, TestIdentifiers}
 import uk.gov.hmrc.agentauthorisation.support.BaseISpec
 import uk.gov.hmrc.agentmtdidentifiers.model.Arn
 import uk.gov.hmrc.http.HeaderCarrier
 
+import java.time.LocalDate
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class InvitationsConnectorISpec extends BaseISpec with ACAStubs with TestIdentifiers {
