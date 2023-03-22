@@ -1,5 +1,5 @@
 
-GET        /api/conf/:version/*file                              @uk.gov.hmrc.agentauthorisation.controllers.RamlController.raml(version, file)
+GET        /api/conf/:version/*file                              @uk.gov.hmrc.agentauthorisation.controllers.YamlController.yaml(version, file)
 
 GET        /api/definition                                       @uk.gov.hmrc.agentauthorisation.controllers.DocumentationController.definition()
 

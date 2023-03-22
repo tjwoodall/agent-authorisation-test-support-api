@@ -16,14 +16,24 @@
 
 package uk.gov.hmrc.agentauthorisation.controllers
 
-import controllers.{AssetsBuilder, AssetsMetadata}
+import akka.stream.Materializer
+import controllers.Assets
+import play.api.Configuration
+import play.api.mvc.{Action, AnyContent, ControllerComponents}
+import play.filters.cors.CORSActionBuilder
+import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
+
 import javax.inject.{Inject, Singleton}
-import play.api.http.HttpErrorHandler
+import scala.concurrent.ExecutionContext
 
 @Singleton
-class RamlController @Inject()(errorHandler: HttpErrorHandler, meta: AssetsMetadata)
-    extends AssetsBuilder(errorHandler, meta) {
+class YamlController @Inject()(assets: Assets, configuration: Configuration, cc: ControllerComponents)(
+  implicit mat: Materializer,
+  ec: ExecutionContext)
+    extends BackendController(cc) {
 
-  def raml(version: String, file: String) =
-    super.at(s"/public/api/conf/$version", file)
+  def yaml(version: String, file: String): Action[AnyContent] =
+    CORSActionBuilder(configuration).async { implicit request =>
+      assets.at(s"/public/api/conf/$version", file)(request)
+    }
 }

@@ -61,7 +61,7 @@ class PlatformIntegrationSpec
       app.injector.instanceOf[akka.stream.Materializer]
     val documentationController =
       app.injector.instanceOf[DocumentationController]
-    val ramlController = app.injector.instanceOf[RamlController]
+    val ramlController = app.injector.instanceOf[YamlController]
     val request = FakeRequest()
   }
 
@@ -100,7 +100,7 @@ class PlatformIntegrationSpec
     }
 
     "provide raml documentation" in new Setup {
-      val result = ramlController.raml("1.0", "application.raml")(request)
+      val result = ramlController.yaml("1.0", "application.raml")(request)
 
       status(result) shouldBe OK
       contentAsString(result) should startWith("#%RAML 1.0")
