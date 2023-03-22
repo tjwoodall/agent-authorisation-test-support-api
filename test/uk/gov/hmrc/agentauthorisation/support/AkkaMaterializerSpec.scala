@@ -17,7 +17,6 @@
 package uk.gov.hmrc.agentauthorisation.support
 
 import akka.actor.ActorSystem
-import akka.stream.ActorMaterializer
 import org.scalatest.{BeforeAndAfterAll, Suite}
 
 /**
@@ -25,10 +24,9 @@ import org.scalatest.{BeforeAndAfterAll, Suite}
   * is starting an app (e.g. via OneAppPerSuite or OneAppPerTest) then you
   * should probably use the app's Materializer instead.
   */
-trait AkkaMaterializerSpec extends BaseSpec with BeforeAndAfterAll { this: Suite =>
+trait AkkaMaterializerSpec extends BaseISpec with BeforeAndAfterAll { this: Suite =>
 
   implicit lazy val actorSystem = ActorSystem()
-  implicit lazy val materializer = ActorMaterializer()
 
   override protected def afterAll(): Unit = {
     super.afterAll()

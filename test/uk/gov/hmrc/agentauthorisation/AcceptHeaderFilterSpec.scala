@@ -20,11 +20,11 @@ import play.api.mvc.Results._
 import play.api.mvc.{Call, RequestHeader, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import uk.gov.hmrc.agentauthorisation.support.BaseSpec
+import uk.gov.hmrc.agentauthorisation.support.BaseISpec
 
 import scala.concurrent.Future
 
-class AcceptHeaderFilterSpec extends BaseSpec {
+class AcceptHeaderFilterSpec extends BaseISpec {
 
   case class TestAcceptHeaderFilter(supportedVersion: Seq[String]) extends AcceptHeaderFilter(supportedVersion) {
     def response(f: RequestHeader => Future[Result])(rh: RequestHeader) = super.apply(f)(rh)
@@ -47,7 +47,7 @@ class AcceptHeaderFilterSpec extends BaseSpec {
 
   "AcceptHeaderFilter" should {
     "return None" when {
-      "no errors found in request" in {
+      "when no errors found in request" in {
         val supportedVersions: Seq[String] = Seq("1.0")
         val fakeTestHeader = fakeHeaders(testHeaderVersion("1.0"))
         TestAcceptHeaderFilter(supportedVersions).response(toResult(Ok("")))(fakeTestHeader).futureValue shouldBe Ok("")

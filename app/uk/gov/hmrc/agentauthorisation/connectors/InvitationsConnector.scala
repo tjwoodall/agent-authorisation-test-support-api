@@ -29,6 +29,7 @@ import uk.gov.hmrc.agentauthorisation.models.Invitation
 import uk.gov.hmrc.agentmtdidentifiers.model.Vrn
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http._
+import uk.gov.hmrc.http.HttpReads.Implicits
 
 import scala.concurrent.{ExecutionContext, Future}
 

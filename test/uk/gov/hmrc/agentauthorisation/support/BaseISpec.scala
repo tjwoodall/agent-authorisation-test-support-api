@@ -19,15 +19,16 @@ package uk.gov.hmrc.agentauthorisation.support
 import akka.stream.Materializer
 import org.scalatest.OptionValues
 import org.scalatest.concurrent.ScalaFutures
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpecLike
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import uk.gov.hmrc.agentauthorisation.stubs.DataStreamStubs
-import org.scalatest._
 
 abstract class BaseISpec
-    extends WordSpecLike with Matchers with OptionValues with ScalaFutures with GuiceOneAppPerSuite with WireMockSupport
-    with DataStreamStubs {
+    extends AnyWordSpecLike with Matchers with OptionValues with ScalaFutures with GuiceOneAppPerSuite
+    with WireMockSupport with DataStreamStubs {
 
   override implicit lazy val app: Application = appBuilder.build()
 

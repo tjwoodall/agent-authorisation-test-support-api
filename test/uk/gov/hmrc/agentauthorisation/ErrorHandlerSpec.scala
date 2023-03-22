@@ -17,7 +17,6 @@
 package uk.gov.hmrc.agentauthorisation
 
 import akka.actor.ActorSystem
-import akka.stream.ActorMaterializer
 import org.mockito.ArgumentMatchers._
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar._
@@ -26,17 +25,16 @@ import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.agentauthorisation.controllers.ErrorResponse._
-import uk.gov.hmrc.agentauthorisation.support.BaseSpec
+import uk.gov.hmrc.agentauthorisation.support.BaseISpec
 import uk.gov.hmrc.play.audit.http.connector.{AuditConnector, AuditResult}
 import uk.gov.hmrc.play.bootstrap.config.HttpAuditEvent
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class ErrorHandlerSpec extends BaseSpec {
+class ErrorHandlerSpec extends BaseISpec {
   trait BaseSetup {
     implicit val sys = ActorSystem("MyTest")
-    implicit val mat = ActorMaterializer()
     implicit val configuration = Configuration(
       "bootstrap.errorHandler.warnOnly.statusCodes"     -> List.empty,
       "bootstrap.errorHandler.suppress4xxErrorMessages" -> false,

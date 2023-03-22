@@ -1,0 +1,172 @@
+openapi: 3.0.3
+info:
+  title: Agent Authorisation Test Support
+  contact: {}
+  version: '1.0'
+servers:
+  - url: https://test-api.service.hmrc.gov.uk/
+    description: Sandbox
+
+paths:
+  /agent-authorisation-test-support/invitations/{id}:
+    put:
+      tags:
+        - agent-authorisation-test-support
+      summary: Accept an invitation created with POST /agents/{arn}/invitations.
+      operationId: AcceptaninvitationcreatedwithPOST/agents/{arn}/invitations.
+      parameters:
+        - $ref: '#/components/parameters/invitationIdParameter'
+        - $ref: '#/components/parameters/contentLengthHeader'
+        - $ref: '#/components/parameters/acceptHeader'
+      security:
+        - {}
+      responses:
+        '204':
+          description: Success - invitation has been accepted
+          headers: {}
+          content: {}
+        '404':
+          description: Invitation not found for the given id
+          headers: {}
+          content: {}
+        '409':
+          description: Invitation has already been rejected or it has expired
+          headers: {}
+          content: {}
+        '400':
+          description: ''
+          headers: {}
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/errorResponse'
+              examples:
+                badRequestUnsupportedVersion:
+                  description: Missing or unsupported version found in 'Accept' header
+                  value:
+                    $ref: './examples/errors/badRequest_missingVersion.json'
+        '406':
+          description: ''
+          headers: {}
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/errorResponse'
+              examples:
+                acceptHeaderMissing:
+                  description: Missing 'Accept' header.
+                  value:
+                    $ref: './examples/errors/notAcceptable_missingAcceptHeader.json'
+                acceptHeaderInvalid:
+                  description: Invalid 'Accept' header.
+                  value:
+                    $ref: './examples/errors/notAcceptable_invalidAcceptHeader.json'
+      deprecated: false
+    delete:
+      tags:
+        - agent-authorisation-test-support
+      summary: Reject an invitation created with POST /agents/{arn}/invitations
+      operationId: RejectaninvitationcreatedwithPOST/agents/{arn}/invitations
+      parameters:
+        - $ref: '#/components/parameters/invitationIdParameter'
+        - $ref: '#/components/parameters/acceptHeader'
+      security:
+        - { }
+      responses:
+        '204':
+          description: Success - invitation has been rejected
+          headers: {}
+          content: {}
+        '404':
+          description: Invitation not found for the given id
+          headers: {}
+          content: {}
+        '409':
+          description: Invitation has already been rejected or it has expired
+          headers: {}
+          content: {}
+        '400':
+          description: ''
+          headers: {}
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/errorResponse'
+              examples:
+                badRequestUnsupportedVersion:
+                  description: Missing or unsupported version found in 'Accept' header.
+                  value:
+                    $ref: './examples/errors/badRequest_missingVersion.json'
+                badRequestUnsupportedContentType:
+                  description: Missing or unsupported version found in 'Content-Type' header.
+                  value:
+                    $ref: './examples/errors/badRequest_missingContentType.json'
+        '406':
+          description: ''
+          headers: {}
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/errorResponse'
+              examples:
+                acceptHeaderMissing:
+                  description: Missing 'Accept' header.
+                  value:
+                    $ref: './examples/errors/notAcceptable_missingAcceptHeader.json'
+                acceptHeaderInvalid:
+                  description: Invalid 'Accept' header.
+                  value:
+                    $ref: './examples/errors/notAcceptable_invalidAcceptHeader.json'
+      deprecated: false
+components:
+  schemas:
+    errorResponse:
+      title: errorResponse
+      required:
+        - code
+        - message
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+  parameters:
+    invitationIdParameter:
+      name: invitationId
+      in: path
+      description: A unique authorisation request ID
+      required: true
+      style: simple
+      schema:
+        type: string
+        example: CS5AK7O8FPC43
+    contentLengthHeader:
+        name: Content-Length
+        in: header
+        description: An empty PUT body must have this header value set to 0.
+        required: true
+        style: simple
+        schema:
+          type: integer
+          example: 0
+    acceptHeader:
+      name: Accept
+      in: header
+      description: >-
+          Specifies the response format and the
+          [version](/api-documentation/docs/reference-guide#versioning) of the API
+          to be used.
+      required: true
+      schema:
+        type: string
+        enum: [
+            "application/vnd.hmrc.1.0+json"
+          ]
+tags:
+  - name: agent-authorisation-test-support
+    description: ''
