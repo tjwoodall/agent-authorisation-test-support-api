@@ -47,7 +47,7 @@ class AcceptHeaderFilterSpec extends BaseISpec {
 
   "AcceptHeaderFilter" should {
     "return None" when {
-      "return none when no errors found in request" in {
+      "when no errors found in request" in {
         val supportedVersions: Seq[String] = Seq("1.0")
         val fakeTestHeader = fakeHeaders(testHeaderVersion("1.0"))
         TestAcceptHeaderFilter(supportedVersions).response(toResult(Ok("")))(fakeTestHeader).futureValue shouldBe Ok("")
