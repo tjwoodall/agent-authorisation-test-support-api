@@ -3,6 +3,10 @@ info:
   title: Agent Authorisation Test Support
   contact: {}
   version: '1.0'
+  description: >-
+    # Support
+
+        You can raise issues on [agent-authorisation-api](https://github.com/hmrc/agent-authorisation-api/issues) GitHub
 servers:
   - url: https://test-api.service.hmrc.gov.uk/
     description: Sandbox
