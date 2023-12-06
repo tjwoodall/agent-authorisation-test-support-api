@@ -81,6 +81,14 @@ class AgentsExternalStubsConnector @Inject()(
         (response.json \ "user" \ "userId").as[String]
       }
 
+  def getUserIdForNino(nino: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[String] =
+    http
+      .GET[HttpResponse](s"$baseUrl/agents-external-stubs/users/nino/${UriEncoding
+        .encodePathSegment(nino, StandardCharsets.UTF_8.name)}")
+      .map { response =>
+        (response.json \ "userId").as[String]
+      }
+
   def getBusinessDetails(
     nino: Nino)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[BusinessDetails]] =
     getWithDesHeaders[BusinessDetails](

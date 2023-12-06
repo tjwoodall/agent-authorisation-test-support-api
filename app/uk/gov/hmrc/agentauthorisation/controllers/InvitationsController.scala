@@ -19,6 +19,7 @@ package uk.gov.hmrc.agentauthorisation.controllers
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.agentauthorisation.connectors.{AgentsExternalStubsConnector, InvitationsConnector}
 import uk.gov.hmrc.agentauthorisation.models.Invitation
+import uk.gov.hmrc.agentmtdidentifiers.model.{ClientIdType, NinoType, Service}
 import uk.gov.hmrc.http.{Authorization, HeaderCarrier, SessionId}
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
@@ -43,8 +44,7 @@ class InvitationsController @Inject()(
                     invitation.status match {
                       case "Pending" =>
                         for {
-                          userId <- agentsExternalStubsConnector
-                                     .getUserIdForEnrolment(enrolmentKeyFor(invitation))(hcStubs1, ec)
+                          userId                        <- getUserId(invitation)(hcStubs1, ec)
                           headerCarrier(hcStubs2, url2) <- agentsExternalStubsConnector.signIn(userId)
                           result2 <- invitationsConnector
                                       .acceptInvitation(id, invitation.clientId, invitation.clientIdType)(hcStubs2, ec)
@@ -76,8 +76,7 @@ class InvitationsController @Inject()(
                     invitation.status match {
                       case "Pending" =>
                         for {
-                          userId <- agentsExternalStubsConnector
-                                     .getUserIdForEnrolment(enrolmentKeyFor(invitation))(hcStubs1, ec)
+                          userId                        <- getUserId(invitation)(hcStubs1, ec)
                           headerCarrier(hcStubs2, url2) <- agentsExternalStubsConnector.signIn(userId)
                           result2 <- invitationsConnector
                                       .rejectInvitation(id, invitation.clientId, invitation.clientIdType)(hcStubs2, ec)
@@ -105,6 +104,13 @@ class InvitationsController @Inject()(
     case "HMRC-MTD-IT"  => s"HMRC-MTD-IT~MTDITID~${invitation.clientId}"
     case _              => throw new Exception("Unsupported service type")
   }
+
+  private def getUserId(invitation: Invitation)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[String] =
+    if (isAltItsa(invitation)) agentsExternalStubsConnector.getUserIdForNino(invitation.clientId)
+    else agentsExternalStubsConnector.getUserIdForEnrolment(enrolmentKeyFor(invitation))
+
+  private def isAltItsa(i: Invitation): Boolean =
+    i.service == Service.MtdIt.id && i.clientIdType == NinoType.id
 
   object headerCarrier {
     def unapply(arg: (String, String, String)): Option[(HeaderCarrier, String)] =
