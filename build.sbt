@@ -7,7 +7,7 @@ lazy val root = (project in file("."))
   .settings(
     name := "agent-authorisation-test-support-api",
     organization := "uk.gov.hmrc",
-    scalaVersion := "2.12.15",
+    scalaVersion := "2.13.10",
     PlayKeys.playDefaultPort := 9443,
     resolvers ++= Seq(
       Resolver.typesafeRepo("releases")
@@ -15,6 +15,7 @@ lazy val root = (project in file("."))
     resolvers += "HMRC-open-artefacts-maven" at "https://open.artefacts.tax.service.gov.uk/maven2",
     resolvers += Resolver.url("HMRC-open-artefacts-ivy", url("https://open.artefacts.tax.service.gov.uk/ivy2"))(Resolver.ivyStylePatterns),
     libraryDependencies ++= compileDeps ++ testDeps("test") ++ testDeps("it"),
+    libraryDependencySchemes ++= Seq("org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always),
     routesImport += "uk.gov.hmrc.agentauthorisation.binders.UrlBinders._",
     scoverageSettings,
     Compile / unmanagedResourceDirectories += baseDirectory.value / "resources",
