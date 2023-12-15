@@ -21,7 +21,7 @@ import play.api.libs.ws.{WSClient, WSRequest, WSResponse}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.http.ws.WSHttpResponse
 
-import scala.concurrent.duration.{Duration, SECONDS, _}
+import scala.concurrent.duration.{Duration, MILLISECONDS, SECONDS}
 import scala.concurrent.{Await, ExecutionContext, Future}
 
 object Http {
@@ -63,7 +63,7 @@ object Http {
       fun(
         ws.url(url)
           .withHttpHeaders(hc.headers(hc.names.explicitlyIncludedHeaders): _*)
-          .withRequestTimeout(20000 milliseconds)).map(WSHttpResponse(_)))
+          .withRequestTimeout(Duration(20000, MILLISECONDS))).map(WSHttpResponse(_)))
 
   private def await[A](future: Future[A]) =
     Await.result(future, Duration(10, SECONDS))
@@ -72,7 +72,7 @@ object Http {
 
 class Resource(path: String, port: Int) {
 
-  private def url() = s"http://localhost:$port$path"
+  private def url = s"http://localhost:$port$path"
 
   def get()(implicit hc: HeaderCarrier = HeaderCarrier(), ec: ExecutionContext, ws: WSClient) =
     Http.get(url)(hc, ec, ws)

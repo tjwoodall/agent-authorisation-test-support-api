@@ -26,6 +26,7 @@ import uk.gov.hmrc.agentauthorisation.models.{BusinessDetails, User, VatCustomer
 import uk.gov.hmrc.agentmtdidentifiers.model.Vrn
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.{Authorization, HeaderCarrier, HttpClient, HttpReads, HttpResponse, UpstreamErrorResponse}
+import uk.gov.hmrc.http.HttpReads.Implicits._
 
 import java.net.URL
 import java.nio.charset.StandardCharsets

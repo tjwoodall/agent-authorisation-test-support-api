@@ -22,7 +22,6 @@ import uk.gov.hmrc.agentauthorisation.support.BaseISpec
 import uk.gov.hmrc.agentmtdidentifiers.model.Arn
 import uk.gov.hmrc.http.HeaderCarrier
 
-import java.time.LocalDate
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class InvitationsConnectorISpec extends BaseISpec with ACAStubs with TestIdentifiers {
@@ -52,52 +51,6 @@ class InvitationsConnectorISpec extends BaseISpec with ACAStubs with TestIdentif
   )
 
   val storedInvitations = Seq(storedItsaInvitation, storedVatInvitation)
-
-  "checkPostcodeForClient" should {
-    "return true when the nino and postcode do match" in {
-      givenMatchingClientIdAndPostcode(validNino, validPostcode)
-      val result = connector.checkPostcodeForClient(validNino, validPostcode).futureValue
-
-      result shouldBe Some(true)
-    }
-
-    "return false when the nino and postcode do not match" in {
-      givenNonMatchingClientIdAndPostcode(validNino, validPostcode)
-      val result = connector.checkPostcodeForClient(validNino, validPostcode).futureValue
-
-      result shouldBe Some(false)
-    }
-
-    "return None when the client registration is not found" in {
-      givenNotEnrolledClientITSA(validNino, validPostcode)
-      val result = connector.checkPostcodeForClient(validNino, validPostcode).futureValue
-
-      result shouldBe None
-    }
-  }
-
-  "checkVatRegDateForClient" should {
-    "return true when the Vrn and VAT registration date do match" in {
-      checkClientIdAndVatRegDate(validVrn, LocalDate.parse(validVatRegDate), 204)
-      val result = connector.checkVatRegDateForClient(validVrn, LocalDate.parse(validVatRegDate)).futureValue
-
-      result shouldBe Some(true)
-    }
-
-    "return false when the Vrn and VAT registration date do not match" in {
-      checkClientIdAndVatRegDate(validVrn, LocalDate.parse(validVatRegDate), 403)
-      val result = connector.checkVatRegDateForClient(validVrn, LocalDate.parse(validVatRegDate)).futureValue
-
-      result shouldBe Some(false)
-    }
-
-    "return None when the client registration is not found" in {
-      checkClientIdAndVatRegDate(validVrn, LocalDate.parse(validVatRegDate), 404)
-      val result = connector.checkVatRegDateForClient(validVrn, LocalDate.parse(validVatRegDate)).futureValue
-
-      result shouldBe None
-    }
-  }
 
   "getInvitation" should {
     "return an ITSA invitation" in {

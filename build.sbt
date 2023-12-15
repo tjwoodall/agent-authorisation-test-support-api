@@ -17,6 +17,10 @@ lazy val root = (project in file("."))
     libraryDependencies ++= compileDeps ++ testDeps("test") ++ testDeps("it"),
     libraryDependencySchemes ++= Seq("org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always),
     routesImport += "uk.gov.hmrc.agentauthorisation.binders.UrlBinders._",
+    scalacOptions ++= Seq(
+      "-Wconf:src=routes/.*:s", // silence warnings from routes files
+      "-Wconf:cat=unused-imports&src=txt/.*:s" // silence warnings from api json
+    ),
     scoverageSettings,
     Compile / unmanagedResourceDirectories += baseDirectory.value / "resources",
     majorVersion := 0,

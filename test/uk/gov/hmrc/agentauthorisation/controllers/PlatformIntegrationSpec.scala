@@ -21,6 +21,7 @@ import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.{status => _, _}
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration._
 import play.api.http.Status.{NO_CONTENT, OK}
+import play.api.libs.json.JsValue
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.agentauthorisation.support.BaseISpec
@@ -31,7 +32,7 @@ class PlatformIntegrationSpec extends BaseISpec {
   val stubPort = 11112
   val wireMockServer = new WireMockServer(wireMockConfig().port(stubPort))
 
-  override def beforeEach() {
+  override def beforeEach(): Unit = {
     wireMockServer.start()
     WireMock.configureFor(stubHost, stubPort)
     stubFor(
@@ -49,24 +50,24 @@ class PlatformIntegrationSpec extends BaseISpec {
   "microservice" should {
 
     "provide definition endpoint and documentation endpoint for each api" in new Setup {
-      def verifyDocumentationPresent(version: String, endpointName: String) {
+      def verifyDocumentationPresent(version: String, endpointName: String): Unit =
         withClue(s"Getting documentation version '$version' of endpoint '$endpointName'") {
           val documentationResult =
             documentationController.documentation(version, endpointName)(request)
           status(documentationResult) shouldBe OK
         }
-      }
 
       val result = documentationController.definition()(request)
       status(result) shouldBe OK
 
-      val jsonResponse = contentAsJson(result)
+      val jsonResponse: JsValue = contentAsJson(result)
 
-      val versions: Seq[String] = (jsonResponse \\ "version") map (_.as[String])
+      val versions: Seq[String] = (jsonResponse \\ "version").map(_.as[String]).toSeq
       val endpointNames: Seq[Seq[String]] =
         (jsonResponse \\ "endpoints")
           .map(_ \\ "endpointName")
-          .map(_.map(_.as[String]))
+          .map(_.map(_.as[String]).toSeq)
+          .toSeq
 
       versions
         .zip(endpointNames)
