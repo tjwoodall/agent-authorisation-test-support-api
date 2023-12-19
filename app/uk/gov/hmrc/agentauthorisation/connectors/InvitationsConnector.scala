@@ -21,15 +21,12 @@ import java.net.URL
 import com.codahale.metrics.MetricRegistry
 import com.kenshoo.play.metrics.Metrics
 import javax.inject.{Inject, Named, Singleton}
-import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 import uk.gov.hmrc.agent.kenshoo.monitoring.HttpAPIMonitor
 import uk.gov.hmrc.agentauthorisation.models.Invitation
-import uk.gov.hmrc.agentmtdidentifiers.model.Vrn
-import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http._
-import uk.gov.hmrc.http.HttpReads.Implicits
+import uk.gov.hmrc.http.HttpReads.Implicits._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -41,43 +38,6 @@ class InvitationsConnector @Inject()(
     extends HttpAPIMonitor {
 
   override val kenshooRegistry: MetricRegistry = metrics.defaultRegistry
-  private val dateFormatter = DateTimeFormatter.ISO_LOCAL_DATE
-
-  def checkPostcodeForClient(nino: Nino, postcode: String)(
-    implicit
-    hc: HeaderCarrier,
-    ec: ExecutionContext): Future[Option[Boolean]] =
-    monitor(s"ConsumedAPI-CheckPostcode-GET") {
-      http
-        .GET[HttpResponse](
-          new URL(
-            baseUrl,
-            s"/agent-client-authorisation/known-facts/individuals/nino/${nino.value}/sa/postcode/$postcode").toString)
-        .map(_ => Some(true))
-    }.recover {
-      case notMatched: Upstream4xxResponse if notMatched.message.contains("POSTCODE_DOES_NOT_MATCH") =>
-        Some(false)
-      case notEnrolled: Upstream4xxResponse if notEnrolled.message.contains("CLIENT_REGISTRATION_NOT_FOUND") =>
-        None
-    }
-
-  def checkVatRegDateForClient(vrn: Vrn, registrationDateKnownFact: LocalDate)(
-    implicit
-    hc: HeaderCarrier,
-    ec: ExecutionContext): Future[Option[Boolean]] =
-    monitor(s"ConsumedAPI-CheckVatRegDate-GET") {
-      http
-        .GET[HttpResponse](new URL(
-          baseUrl,
-          s"/agent-client-authorisation/known-facts/organisations/vat/${vrn.value}/registration-date/${dateFormatter
-            .format(registrationDateKnownFact)}"
-        ).toString)
-        .map(_ => Some(true))
-    }.recover {
-      case ex: Upstream4xxResponse if ex.upstreamResponseCode == 403 =>
-        Some(false)
-      case _: NotFoundException => None
-    }
 
   def getInvitation(invitationId: String)(
     implicit
@@ -103,9 +63,9 @@ class InvitationsConnector @Inject()(
         )
         .map(response => Some(response.status))
     }.recover {
-      case _: NotFoundException    => Some(404)
-      case ex: Upstream4xxResponse => Some(ex.upstreamResponseCode)
-      case _                       => Some(403)
+      case _: NotFoundException      => Some(404)
+      case ex: UpstreamErrorResponse => Some(ex.statusCode)
+      case _                         => Some(403)
     }
 
   def rejectInvitation(invitationId: String, clientIdentifier: String, clientIdentifierType: String)(
@@ -122,8 +82,8 @@ class InvitationsConnector @Inject()(
         )
         .map(response => Some(response.status))
     }.recover {
-      case _: NotFoundException    => Some(404)
-      case ex: Upstream4xxResponse => Some(ex.upstreamResponseCode)
-      case _                       => Some(403)
+      case _: NotFoundException      => Some(404)
+      case ex: UpstreamErrorResponse => Some(ex.statusCode)
+      case _                         => Some(403)
     }
 }
