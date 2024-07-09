@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.agentauthorisation.controllers
 
-import akka.stream.Materializer
+import org.apache.pekko.stream.Materializer
 import controllers.Assets
 import play.api.Configuration
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
@@ -27,10 +27,10 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class YamlController @Inject()(assets: Assets, configuration: Configuration, cc: ControllerComponents)(
-  implicit mat: Materializer,
-  ec: ExecutionContext)
-    extends BackendController(cc) {
+class YamlController @Inject() (assets: Assets, configuration: Configuration, cc: ControllerComponents)(implicit
+  mat: Materializer,
+  ec: ExecutionContext
+) extends BackendController(cc) {
 
   def yaml(version: String, file: String): Action[AnyContent] =
     CORSActionBuilder(configuration).async { implicit request =>

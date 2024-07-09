@@ -14,20 +14,12 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.agentauthorisation.models
-import play.api.libs.json.{Json, OFormat}
-import uk.gov.hmrc.agentmtdidentifiers.model.Arn
+package uk.gov.hmrc.agentauthorisation
 
-case class Invitation(
-  invitationId: String,
-  arn: Arn,
-  clientType: String,
-  clientId: String,
-  clientIdType: String,
-  service: String,
-  status: String
-)
+import scala.concurrent.Future
 
-object Invitation {
-  implicit val formats: OFormat[Invitation] = Json.format[Invitation]
+package object util {
+
+  implicit def toFuture[A](a: A): Future[A] = Future.successful(a)
+
 }

@@ -16,51 +16,48 @@
 
 package uk.gov.hmrc.agentauthorisation.connectors
 
-import java.net.URL
-
-import com.codahale.metrics.MetricRegistry
-import com.kenshoo.play.metrics.Metrics
-import javax.inject.{Inject, Named, Singleton}
-import java.time.format.DateTimeFormatter
-
-import uk.gov.hmrc.agent.kenshoo.monitoring.HttpAPIMonitor
 import uk.gov.hmrc.agentauthorisation.models.Invitation
-import uk.gov.hmrc.http._
+import uk.gov.hmrc.agentauthorisation.util.HttpAPIMonitor
 import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.http._
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.play.bootstrap.metrics.Metrics
 
+import java.net.URL
+import javax.inject.{Inject, Named, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class InvitationsConnector @Inject()(
+class InvitationsConnector @Inject() (
   @Named("agent-client-authorisation-baseUrl") baseUrl: URL,
-  http: HttpPost with HttpGet with HttpPut,
-  metrics: Metrics)
+  http: HttpClientV2,
+  val metrics: Metrics
+)(implicit val ec: ExecutionContext)
     extends HttpAPIMonitor {
 
-  override val kenshooRegistry: MetricRegistry = metrics.defaultRegistry
-
-  def getInvitation(invitationId: String)(
-    implicit
-    headerCarrier: HeaderCarrier,
-    executionContext: ExecutionContext) =
+  def getInvitation(
+    invitationId: String
+  )(implicit headerCarrier: HeaderCarrier, ec: ExecutionContext): Future[Option[Invitation]] =
     monitor(s"ConsumedAPI-Get-Invitation-GET") {
-      http.GET[Option[Invitation]](new URL(baseUrl, s"/agent-client-authorisation/invitations/$invitationId").toString)
-    }.recoverWith {
-      case _: NotFoundException => Future successful None
+      http.get(new URL(baseUrl, s"/agent-client-authorisation/invitations/$invitationId")).execute[Option[Invitation]]
+    }.recoverWith { case _: NotFoundException =>
+      Future successful None
     }
 
-  def acceptInvitation(invitationId: String, clientIdentifier: String, clientIdentifierType: String)(
-    implicit
+  def acceptInvitation(invitationId: String, clientIdentifier: String, clientIdentifierType: String)(implicit
     headerCarrier: HeaderCarrier,
-    executionContext: ExecutionContext): Future[Option[Int]] =
+    ec: ExecutionContext
+  ): Future[Option[Int]] =
     monitor(s"ConsumedAPI-Accept-Invitation-PUT") {
       http
-        .PUT[String, HttpResponse](
+        .put(
           new URL(
             baseUrl,
-            s"/agent-client-authorisation/clients/${clientIdentifierType.toUpperCase}/$clientIdentifier/invitations/received/$invitationId/accept").toString,
-          ""
+            s"/agent-client-authorisation/clients/${clientIdentifierType.toUpperCase}/$clientIdentifier/invitations/received/$invitationId/accept"
+          )
         )
+        .withBody("")
+        .execute[HttpResponse]
         .map(response => Some(response.status))
     }.recover {
       case _: NotFoundException      => Some(404)
@@ -68,18 +65,20 @@ class InvitationsConnector @Inject()(
       case _                         => Some(403)
     }
 
-  def rejectInvitation(invitationId: String, clientIdentifier: String, clientIdentifierType: String)(
-    implicit
+  def rejectInvitation(invitationId: String, clientIdentifier: String, clientIdentifierType: String)(implicit
     headerCarrier: HeaderCarrier,
-    executionContext: ExecutionContext): Future[Option[Int]] =
+    ec: ExecutionContext
+  ): Future[Option[Int]] =
     monitor(s"ConsumedAPI-Reject-Invitation-PUT") {
       http
-        .PUT[String, HttpResponse](
+        .put(
           new URL(
             baseUrl,
-            s"/agent-client-authorisation/clients/${clientIdentifierType.toUpperCase}/$clientIdentifier/invitations/received/$invitationId/reject").toString,
-          ""
+            s"/agent-client-authorisation/clients/${clientIdentifierType.toUpperCase}/$clientIdentifier/invitations/received/$invitationId/reject"
+          )
         )
+        .withBody("")
+        .execute[HttpResponse]
         .map(response => Some(response.status))
     }.recover {
       case _: NotFoundException      => Some(404)

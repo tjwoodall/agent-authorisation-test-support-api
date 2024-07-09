@@ -16,17 +16,17 @@
 
 package uk.gov.hmrc.agentauthorisation.wiring
 
-import com.kenshoo.play.metrics.MetricsFilter
 import javax.inject.{Inject, Singleton}
 import play.api.http.DefaultHttpFilters
 import uk.gov.hmrc.agentauthorisation.AcceptHeaderFilter
 import uk.gov.hmrc.play.bootstrap.filters.{AuditFilter, CacheControlFilter, LoggingFilter}
+import uk.gov.hmrc.play.bootstrap.metrics.MetricsFilter
 
 @Singleton
-class MicroserviceFilters @Inject()(
+class MicroserviceFilters @Inject() (
   metricsFilter: MetricsFilter,
   auditFilter: AuditFilter,
   loggingFilter: LoggingFilter,
   cacheFilter: CacheControlFilter,
-  acceptHeaderFilter: AcceptHeaderFilter)
-    extends DefaultHttpFilters(metricsFilter, auditFilter, loggingFilter, cacheFilter, acceptHeaderFilter)
+  acceptHeaderFilter: AcceptHeaderFilter
+) extends DefaultHttpFilters(metricsFilter, auditFilter, loggingFilter, cacheFilter, acceptHeaderFilter)
