@@ -164,11 +164,33 @@ trait ACAStubs {
       getRequestedFor(urlPathMatching("/agent-client-authorisation/known-facts/organisations/.*/registration-date/.*"))
     )
 
-  def givenGetITSAInvitationStub(arn: Arn, status: String): Unit =
-    givenGetAgentInvitationStub(arn, "personal", "MTDITID", mtdItId.value, invitationIdITSA, serviceITSA, status)
+  def givenGetITSAInvitationStub(arn: Arn, status: String, altItsa: Boolean = false): Unit =
+    givenGetAgentInvitationStub(
+      arn,
+      "personal",
+      if (altItsa) identifierAltITSA else identifierITSA,
+      if (altItsa) nino else mtdItId.value,
+      invitationIdITSA,
+      serviceITSA,
+      status
+    )
+
+  def givenGetITSASuppInvitationStub(arn: Arn, status: String, altItsa: Boolean = false): Unit =
+    givenGetAgentInvitationStub(
+      arn,
+      "personal",
+      if (altItsa) identifierAltITSA else identifierITSA,
+      if (altItsa) nino else mtdItId.value,
+      invitationIdITSA,
+      serviceITSASupp,
+      status
+    )
 
   def givenGetVATInvitationStub(arn: Arn, status: String): Unit =
     givenGetAgentInvitationStub(arn, "business", "vrn", validVrn.value, invitationIdVAT, serviceVAT, status)
+
+  def givenGetUnsupportedInvitationStub(arn: Arn, status: String): Unit =
+    givenGetAgentInvitationStub(arn, "business", "key", "id", invalidInvitationId, "HMRC-ABC-DEF", status)
 
   def givenGetAgentInvitationStub(
     arn: Arn,

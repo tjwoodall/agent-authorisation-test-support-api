@@ -29,9 +29,12 @@ trait TestIdentifiers {
 
   val mtdItId = MtdItId("ABCDEF123456789")
   val serviceITSA = "HMRC-MTD-IT"
+  val serviceITSASupp = "HMRC-MTD-IT-SUPP"
   val validPostcode = "DH14EJ"
   val invitationIdITSA = "ABERULMHCKKW3"
   val identifierITSA = "MTDITID"
+  val identifierAltITSA = "ni"
+  val userIdITSA = "ITSAClient001"
 
   val invitationIdVAT = "CZTW1KY6RTAAT"
   val serviceVAT = "HMRC-MTD-VAT"
@@ -43,5 +46,4 @@ trait TestIdentifiers {
   val validVrn9755 = Vrn("101747641")
 
   val invalidInvitationId = "ZTSF4OW9CCRPT"
-
 }
