@@ -19,7 +19,6 @@ package uk.gov.hmrc.agentauthorisation.support
 import play.api.http.{HeaderNames, MimeTypes}
 import play.api.libs.ws.{WSClient, WSRequest, WSResponse}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
-import uk.gov.hmrc.play.http.ws.WSHttpResponse
 
 import scala.concurrent.duration.{Duration, MILLISECONDS, SECONDS}
 import scala.concurrent.{Await, ExecutionContext, Future}
@@ -62,7 +61,7 @@ object Http {
         ws.url(url)
           .withHttpHeaders(hc.headers(hc.names.explicitlyIncludedHeaders): _*)
           .withRequestTimeout(Duration(20000, MILLISECONDS))
-      ).map(WSHttpResponse(_))
+      ).map(response => HttpResponse(response.status, response.body))
     )
 
   private def await[A](future: Future[A]) =

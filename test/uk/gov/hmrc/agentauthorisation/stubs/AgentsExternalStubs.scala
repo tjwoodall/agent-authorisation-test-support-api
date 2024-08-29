@@ -22,8 +22,26 @@ trait AgentsExternalStubs {
 
   def givenITSAUserAuthenticatedInStubs(): Unit = {
     givenUserAuthenticatedInStubs("Alf")
-    givenClientEnrolmentExistsInStubs(s"HMRC-MTD-IT~MTDITID~${mtdItId.value}", "ITSAClient001")
-    givenUserAuthenticatedInStubs("ITSAClient001")
+    givenClientEnrolmentExistsInStubs(s"HMRC-MTD-IT~MTDITID~${mtdItId.value}", userIdITSA)
+    givenUserAuthenticatedInStubs(userIdITSA)
+  }
+
+  def givenITSASuppUserAuthenticatedInStubs(): Unit = {
+    givenUserAuthenticatedInStubs("Alf")
+    givenClientEnrolmentExistsInStubs(s"HMRC-MTD-IT-SUPP~MTDITID~${mtdItId.value}", userIdITSA)
+    givenUserAuthenticatedInStubs(userIdITSA)
+  }
+
+  def givenVATUserAuthenticatedInStubs(): Unit = {
+    givenUserAuthenticatedInStubs("Alf")
+    givenClientEnrolmentExistsInStubs(s"HMRC-MTD-VAT~VRN~${validVrn.value}", "VATClient001")
+    givenUserAuthenticatedInStubs("VATClient001")
+  }
+
+  def givenUnsupportedRegimeUserInStubs(): Unit = {
+    givenUserAuthenticatedInStubs("Alf")
+    givenClientEnrolmentExistsInStubs(s"HMRC-ABC-DEF~KEY~$invalidInvitationId", "UnsupportedClient001")
+    givenUserAuthenticatedInStubs("UnsupportedClient001")
   }
 
   def givenUserAuthenticatedInStubs(userId: String): Unit = {
@@ -57,6 +75,18 @@ trait AgentsExternalStubs {
                          |  },
                          |  "agents":[]
                          |}""".stripMargin)
+        )
+    )
+    ()
+  }
+
+  def givenUserIdForNino(nino: String): Unit = {
+    stubFor(
+      get(urlEqualTo(s"/agents-external-stubs/users/nino/$nino"))
+        .willReturn(
+          aResponse()
+            .withStatus(200)
+            .withBody(s"""{"planetId": "hmrc", "userId": "$userIdITSA"}""")
         )
     )
     ()
