@@ -107,7 +107,7 @@ class InvitationsController @Inject() (
   def enrolmentKeyFor(invitation: Invitation): String = invitation.service match {
     case "HMRC-MTD-VAT"     => s"HMRC-MTD-VAT~VRN~${invitation.clientId}"
     case "HMRC-MTD-IT"      => s"HMRC-MTD-IT~MTDITID~${invitation.clientId}"
-    case "HMRC-MTD-IT-SUPP" => s"HMRC-MTD-IT-SUPP~MTDITID~${invitation.clientId}"
+    case "HMRC-MTD-IT-SUPP" => s"HMRC-MTD-IT~MTDITID~${invitation.clientId}"
     case _                  => throw new Exception("Unsupported service type")
   }
 
