@@ -28,7 +28,7 @@ trait AgentsExternalStubs {
 
   def givenITSASuppUserAuthenticatedInStubs(): Unit = {
     givenUserAuthenticatedInStubs("Alf")
-    givenClientEnrolmentExistsInStubs(s"HMRC-MTD-IT-SUPP~MTDITID~${mtdItId.value}", userIdITSA)
+    givenClientEnrolmentExistsInStubs(s"HMRC-MTD-IT~MTDITID~${mtdItId.value}", userIdITSA)
     givenUserAuthenticatedInStubs(userIdITSA)
   }
 
