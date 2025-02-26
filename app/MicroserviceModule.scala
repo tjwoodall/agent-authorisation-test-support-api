@@ -16,8 +16,7 @@
 
 import com.google.inject.name.Names
 import com.google.inject.{AbstractModule, TypeLiteral}
-import org.slf4j.MDC
-import play.api.{Configuration, Environment, Logger}
+import play.api.{Configuration, Environment}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import java.net.URL
@@ -26,13 +25,6 @@ import javax.inject.Provider
 class MicroserviceModule(val environment: Environment, val configuration: Configuration) extends AbstractModule {
 
   override def configure(): Unit = {
-    val appName = "agent-authorisation"
-
-    val loggerDateFormat: Option[String] =
-      configuration.getOptional[String]("logger.json.dateformat")
-    Logger(getClass).info(s"Starting microservice : $appName : in mode : ${environment.mode}")
-    MDC.put("appName", appName)
-    loggerDateFormat.foreach(str => MDC.put("logger.json.dateformat", str))
 
     bindBaseUrl("agents-external-stubs")
     bindBaseUrl("agent-client-authorisation")
