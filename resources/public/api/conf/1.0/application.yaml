@@ -12,7 +12,7 @@ servers:
     description: Sandbox
 
 paths:
-  /agent-authorisation-test-support/invitations/{id}:
+  /agent-authorisation-test-support/invitations/{invitationId}:
     put:
       tags:
         - agent-authorisation-test-support
