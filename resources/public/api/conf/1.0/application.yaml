@@ -8,7 +8,7 @@ info:
 
         You can raise issues on [agent-authorisation-api](https://github.com/hmrc/agent-authorisation-api/issues) GitHub
 servers:
-  - url: https://test-api.service.hmrc.gov.uk/
+  - url: https://test-api.service.hmrc.gov.uk
     description: Sandbox
 
 paths:
@@ -17,7 +17,7 @@ paths:
       tags:
         - agent-authorisation-test-support
       summary: Accept an invitation created with POST /agents/{arn}/invitations.
-      operationId: AcceptaninvitationcreatedwithPOST/agents/{arn}/invitations.
+      operationId: Acceptaninvitation
       parameters:
         - $ref: '#/components/parameters/invitationIdParameter'
         - $ref: '#/components/parameters/contentLengthHeader'
@@ -72,7 +72,7 @@ paths:
       tags:
         - agent-authorisation-test-support
       summary: Reject an invitation created with POST /agents/{arn}/invitations
-      operationId: RejectaninvitationcreatedwithPOST/agents/{arn}/invitations
+      operationId: Rejectaninvitation
       parameters:
         - $ref: '#/components/parameters/invitationIdParameter'
         - $ref: '#/components/parameters/acceptHeader'
