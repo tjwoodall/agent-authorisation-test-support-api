@@ -48,8 +48,7 @@ paths:
               examples:
                 badRequestUnsupportedVersion:
                   description: Missing or unsupported version found in 'Accept' header
-                  value:
-                    $ref: './examples/errors/badRequest_missingVersion.json'
+                  externalValue: './examples/errors/badRequest_missingVersion.json'
         '406':
           description: ''
           headers: {}
@@ -61,12 +60,10 @@ paths:
               examples:
                 acceptHeaderMissing:
                   description: Missing 'Accept' header.
-                  value:
-                    $ref: './examples/errors/notAcceptable_missingAcceptHeader.json'
+                  externalValue: './examples/errors/notAcceptable_missingAcceptHeader.json'
                 acceptHeaderInvalid:
                   description: Invalid 'Accept' header.
-                  value:
-                    $ref: './examples/errors/notAcceptable_invalidAcceptHeader.json'
+                  externalValue: './examples/errors/notAcceptable_invalidAcceptHeader.json'
       deprecated: false
     delete:
       tags:
@@ -102,12 +99,10 @@ paths:
               examples:
                 badRequestUnsupportedVersion:
                   description: Missing or unsupported version found in 'Accept' header.
-                  value:
-                    $ref: './examples/errors/badRequest_missingVersion.json'
+                  externalValue: './examples/errors/badRequest_missingVersion.json'
                 badRequestUnsupportedContentType:
                   description: Missing or unsupported version found in 'Content-Type' header.
-                  value:
-                    $ref: './examples/errors/badRequest_missingContentType.json'
+                  externalValue: './examples/errors/badRequest_missingContentType.json'
         '406':
           description: ''
           headers: {}
@@ -119,12 +114,10 @@ paths:
               examples:
                 acceptHeaderMissing:
                   description: Missing 'Accept' header.
-                  value:
-                    $ref: './examples/errors/notAcceptable_missingAcceptHeader.json'
+                  externalValue: './examples/errors/notAcceptable_missingAcceptHeader.json'
                 acceptHeaderInvalid:
                   description: Invalid 'Accept' header.
-                  value:
-                    $ref: './examples/errors/notAcceptable_invalidAcceptHeader.json'
+                  externalValue: './examples/errors/notAcceptable_invalidAcceptHeader.json'
       deprecated: false
 components:
   schemas:
