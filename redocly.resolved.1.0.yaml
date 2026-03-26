@@ -73,8 +73,7 @@ paths:
                 badRequestUnsupportedVersion:
                   description: Missing or unsupported version found in 'Accept' header
                   value:
-                    code: BAD_REQUEST
-                    message: Missing or unsupported version number
+                    $ref: ./examples/errors/badRequest_missingVersion.json
         '404':
           description: Invitation not found for the given id
           headers: {}
@@ -94,13 +93,11 @@ paths:
                 acceptHeaderMissing:
                   description: Missing 'Accept' header.
                   value:
-                    code: ACCEPT_HEADER_INVALID
-                    message: Missing 'Accept' header.
+                    $ref: ./examples/errors/notAcceptable_missingAcceptHeader.json
                 acceptHeaderInvalid:
                   description: Invalid 'Accept' header.
                   value:
-                    code: ACCEPT_HEADER_INVALID
-                    message: Invalid 'Accept' header
+                    $ref: ./examples/errors/notAcceptable_invalidAcceptHeader.json
         '409':
           description: Invitation has already been rejected or it has expired
           headers: {}
@@ -145,13 +142,11 @@ paths:
                 badRequestUnsupportedVersion:
                   description: Missing or unsupported version found in 'Accept' header.
                   value:
-                    code: BAD_REQUEST
-                    message: Missing or unsupported version number
+                    $ref: ./examples/errors/badRequest_missingVersion.json
                 badRequestUnsupportedContentType:
                   description: Missing or unsupported version found in 'Content-Type' header.
                   value:
-                    code: BAD_REQUEST
-                    message: Missing or unsupported content-type
+                    $ref: ./examples/errors/badRequest_missingContentType.json
         '404':
           description: Invitation not found for the given id
           headers: {}
@@ -171,13 +166,11 @@ paths:
                 acceptHeaderMissing:
                   description: Missing 'Accept' header.
                   value:
-                    code: ACCEPT_HEADER_INVALID
-                    message: Missing 'Accept' header.
+                    $ref: ./examples/errors/notAcceptable_missingAcceptHeader.json
                 acceptHeaderInvalid:
                   description: Invalid 'Accept' header.
                   value:
-                    code: ACCEPT_HEADER_INVALID
-                    message: Invalid 'Accept' header
+                    $ref: ./examples/errors/notAcceptable_invalidAcceptHeader.json
         '409':
           description: Invitation has already been rejected or it has expired
           headers: {}
