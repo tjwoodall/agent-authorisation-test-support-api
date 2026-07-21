@@ -19,7 +19,6 @@ package uk.gov.hmrc.agentauthorisation.controllers
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.agentauthorisation.connectors.{AgentClientRelationshipsConnector, AgentsExternalStubsConnector}
 import uk.gov.hmrc.agentauthorisation.models.Invitation
-import uk.gov.hmrc.agentauthorisation.models.{NinoType, Service}
 import uk.gov.hmrc.http.{Authorization, HeaderCarrier, SessionId}
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
@@ -105,20 +104,17 @@ class InvitationsController @Inject() (
   }
 
   def enrolmentKeyFor(invitation: Invitation): String = invitation.service match {
-    case "HMRC-MTD-VAT"     => s"HMRC-MTD-VAT~VRN~${invitation.clientId}"
-    case "HMRC-MTD-IT"      => s"HMRC-MTD-IT~MTDITID~${invitation.clientId}"
-    case "HMRC-MTD-IT-SUPP" => s"HMRC-MTD-IT~MTDITID~${invitation.clientId}"
+    case "HMRC-MTD-VAT"     => s"HMRC-MTD-VAT~VRN~${invitation.suppliedClientId}"
+    case "HMRC-MTD-IT"      => s"HMRC-MTD-IT~MTDITID~${invitation.suppliedClientId}"
+    case "HMRC-MTD-IT-SUPP" => s"HMRC-MTD-IT~MTDITID~${invitation.suppliedClientId}"
     case _                  => throw new Exception("Unsupported service type")
   }
 
   private def getUserId(invitation: Invitation)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[String] =
-    if (isAltItsa(invitation)) agentsExternalStubsConnector.getUserIdForNino(invitation.clientId)
-    else agentsExternalStubsConnector.getUserIdForEnrolment(enrolmentKeyFor(invitation))
-
-  private def isAltItsa(i: Invitation): Boolean = (i.service, i.clientIdType) match {
-    case (Service.MtdIt.id | Service.MtdItSupp.id, NinoType.id) => true
-    case _                                                      => false
-  }
+    invitation.suppliedClientIdType match {
+      case "ni" => agentsExternalStubsConnector.getUserIdForNino(invitation.suppliedClientId)
+      case _    => agentsExternalStubsConnector.getUserIdForEnrolment(enrolmentKeyFor(invitation))
+    }
 
   object headerCarrier {
     def unapply(arg: (String, String, String)): Option[(HeaderCarrier, String)] =
